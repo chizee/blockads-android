@@ -85,16 +85,39 @@ class BrowserRuleRepositoryImpl(
                 return@withContext Result.success(false)
             }
 
+            var finalPackage = remotePackage
+
+            // Support remote URL resolution for CSS and JS if provided as HTTP/HTTPS URLs
+            val remoteCss = remotePackage.cosmeticCss?.trim()
+            if (remoteCss != null && (remoteCss.startsWith("http://") || remoteCss.startsWith("https://"))) {
+                runCatching {
+                    val cssRes = client.get(remoteCss)
+                    if (cssRes.status.value in 200..299) {
+                        finalPackage = finalPackage.copy(cosmeticCss = cssRes.bodyAsText())
+                    }
+                }.onFailure { Timber.w(it, "Failed to resolve remote cosmeticCss URL: %s", remoteCss) }
+            }
+
+            val remoteJs = remotePackage.scriptletsJs?.trim()
+            if (remoteJs != null && (remoteJs.startsWith("http://") || remoteJs.startsWith("https://"))) {
+                runCatching {
+                    val jsRes = client.get(remoteJs)
+                    if (jsRes.status.value in 200..299) {
+                        finalPackage = finalPackage.copy(scriptletsJs = jsRes.bodyAsText())
+                    }
+                }.onFailure { Timber.w(it, "Failed to resolve remote scriptletsJs URL: %s", remoteJs) }
+            }
+
             // Save and hot-reload in-memory rules
-            val saved = storage.savePackage(remotePackage)
+            val saved = storage.savePackage(finalPackage)
             if (saved) {
-                _currentRules.value = remotePackage
-                BrowserAdBlocker.applyRulePackage(remotePackage)
+                _currentRules.value = finalPackage
+                BrowserAdBlocker.applyRulePackage(finalPackage)
                 _updateStatus.value = BrowserRuleUpdateStatus.Updated(
-                    version = remotePackage.version,
-                    domainsCount = remotePackage.adDomains.size
+                    version = finalPackage.version,
+                    domainsCount = finalPackage.adDomains.size
                 )
-                Timber.i("Updated browser rules to v%d with %d domains", remotePackage.version, remotePackage.adDomains.size)
+                Timber.i("Updated browser rules to v%d with %d domains", finalPackage.version, finalPackage.adDomains.size)
                 Result.success(true)
             } else {
                 val err = "Failed to save updated rules to local storage"

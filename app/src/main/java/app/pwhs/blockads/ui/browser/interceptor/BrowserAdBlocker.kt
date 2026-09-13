@@ -50,14 +50,11 @@ object BrowserAdBlocker {
         if (rulePackage.adPathPatterns.isNotEmpty()) {
             activeAdPathPatterns = rulePackage.adPathPatterns
         }
-        if (!rulePackage.cosmeticCss.isNullOrBlank()) {
-            activeCosmeticCss = rulePackage.cosmeticCss
-            scriptCache.remove("adblock_cosmetic_wrapped.js")
-        }
-        if (!rulePackage.scriptletsJs.isNullOrBlank()) {
-            activeScriptletsJs = rulePackage.scriptletsJs
-            scriptCache.remove("adguard_scriptlets.js")
-        }
+        activeCosmeticCss = rulePackage.cosmeticCss?.takeIf { it.isNotBlank() }
+        scriptCache.remove("adblock_cosmetic.css")
+
+        activeScriptletsJs = rulePackage.scriptletsJs?.takeIf { it.isNotBlank() }
+        scriptCache.remove("adguard_scriptlets.js")
     }
 
     fun shouldBlock(request: WebResourceRequest): Boolean {
