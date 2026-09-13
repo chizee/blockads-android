@@ -118,14 +118,24 @@ div[id^="adtima_"],
 /* VnExpress Ad Placeholders & Sections */
 #banner_top,
 #TOP_BANNER,
+#home_banner_pr,
 .section_ads_300x250,
 .section_ads,
 .banner_mobile_300x250,
 .inner_ads,
-.article_ads,
+/* .article_ads alone is too broad — VNE uses it on news feed wrappers too.
+   Only hide when it is NOT a mixed news+ad container. */
+.article_ads:not(.art_item):not([class*="list_news"]):not(.art_section),
 .ads_content,
 .vne_footer_ads,
 div[id^="sis_"],
+#sis_masthead,
+#sis_bottombanner,
+#sis_nativeshop,
+#sis_large1,
+#sis_large2,
+#sis_large3,
+#sis_large5,
 ins.adsbyeclick,
 span.text_ads,
 span.txt_qc,
@@ -440,5 +450,46 @@ a[href*="apps2app.com"] {
         clear: both !important;
     }
 }
+
+/* ========================================================
+   VnExpress — Targeted rules for mixed news+ad containers
+   .article_ads on .art_item also wraps news articles so
+   we can't hide the whole container. Instead we surgically
+   hide only the ad nodes inside it.
+   ======================================================== */
+
+/* Hide the eClick <ins> ad units inside any container */
+.article_ads ins.adsbyeclick,
+.article_ads .inner_section:has(> ins.adsbyeclick),
+.article_ads > div:has(> ins.adsbyeclick) {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Collapse the "Quảng cáo" label that renders outside the hidden slot */
+.article_ads .text_ads,
+.article_ads .txt_qc,
+.article_ads span[class*="text_ads"],
+.article_ads span[class*="txt_qc"] {
+    display: none !important;
+}
+
+/* Collapse .article_ads that contains ONLY ad slots (no visible text nodes) —
+   use :has() to detect a sis_ child with no article sibling */
+.art_item.article_ads:has(> div[id^="sis_"]):not(:has(> article)),
+.art_item.article_ads:has(> .ads_content):not(:has(> article)),
+.art_item.article_ads:has(> .inner_section > ins.adsbyeclick):not(:has(> article)) {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
 
 

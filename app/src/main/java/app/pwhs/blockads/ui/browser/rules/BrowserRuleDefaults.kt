@@ -6,7 +6,7 @@ package app.pwhs.blockads.ui.browser.rules
  */
 object BrowserRuleDefaults {
 
-    const val INITIAL_VERSION = 10L
+    const val INITIAL_VERSION = 11L
 
     val AD_HOST_SUFFIXES = listOf(
         "doubleclick.net",
