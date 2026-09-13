@@ -193,7 +193,7 @@ func wrapResponseForInjection(resp *http.Response) {
 	resp.Header.Del("Transfer-Encoding")
 	resp.Header.Del("Content-Security-Policy")
 	resp.Header.Del("Content-Security-Policy-Report-Only")
-	resp.TransferEncoding = nil
+	resp.TransferEncoding = []string{"chunked"}
 	resp.Uncompressed = true
 }
 

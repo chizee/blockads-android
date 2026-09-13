@@ -171,10 +171,12 @@ func relayHTTPFlow(clientConn, serverConn net.Conn, hostname string, filter *Mit
 
 		if blocker != nil && reqHost != hostname && blocker.IsDomainBlocked(reqHost) {
 			blockedResp := &http.Response{
-				StatusCode: 403,
-				ProtoMajor: 1, ProtoMinor: 1,
-				Header: make(http.Header),
-				Body:   io.NopCloser(strings.NewReader("Blocked by BlockAds")),
+				StatusCode:    403,
+				ProtoMajor:    1,
+				ProtoMinor:    1,
+				ContentLength: 19,
+				Header:        make(http.Header),
+				Body:          io.NopCloser(strings.NewReader("Blocked by BlockAds")),
 			}
 			blockedResp.Header.Set("Connection", "keep-alive")
 			blockedResp.Header.Set("Content-Length", "19")
