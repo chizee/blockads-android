@@ -177,9 +177,14 @@ func NewMitmTcpHandler(
 func NewMitmUdpHandler(filter *MitmFilter, uidr UIDResolver, baseRelay UdpFlowHandler) UdpFlowHandler {
 	return func(conn adapter.UDPConn) {
 		flow := udpFlowID(conn)
-		if flow.serverPort == 443 && filter != nil && filter.HasAllowedUIDs() {
-			uid := resolveFlowUID(uidr, ProtocolUDP, flow)
-			if uid != UIDUnknown && filter.IsUIDAllowed(uid) {
+		if flow.serverPort == 443 {
+			if filter != nil && filter.HasAllowedUIDs() {
+				uid := resolveFlowUID(uidr, ProtocolUDP, flow)
+				if uid == UIDUnknown || filter.IsUIDAllowed(uid) {
+					_ = conn.Close()
+					return
+				}
+			} else {
 				_ = conn.Close()
 				return
 			}

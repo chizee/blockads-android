@@ -99,7 +99,7 @@ class VpnSecurityPreferences(private val dataStore: DataStore<Preferences>) {
     }
 
     val filterHttp3: Flow<Boolean> = dataStore.data.map { prefs ->
-        prefs[KEY_FILTER_HTTP3] ?: false
+        prefs[KEY_FILTER_HTTP3] ?: true
     }
 
     val crashReportingEnabled: Flow<Boolean> = dataStore.data.map { prefs ->
@@ -203,7 +203,7 @@ class VpnSecurityPreferences(private val dataStore: DataStore<Preferences>) {
     }
 
     suspend fun getFilterHttp3Snapshot(): Boolean =
-        dataStore.data.first()[KEY_FILTER_HTTP3] ?: false
+        dataStore.data.first()[KEY_FILTER_HTTP3] ?: true
 
     suspend fun setSelectedBrowsers(packages: Set<String>) {
         dataStore.edit { prefs -> prefs[KEY_SELECTED_BROWSERS] = packages }

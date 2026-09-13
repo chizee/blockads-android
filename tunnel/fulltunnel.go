@@ -233,9 +233,14 @@ func newFullTunnelUdpHandler(engine *Engine, filter *MitmFilter, uidr UIDResolve
 		// when HTTP/3 filtering is enabled from the UI. Default off →
 		// relay QUIC so pages load fully. DNS-level blocking still applies
 		// either way.
-		if engine.quicDrop.Load() && flow.serverPort == 443 && filter != nil && filter.HasAllowedUIDs() {
-			uid := resolveFlowUID(uidr, ProtocolUDP, flow)
-			if uid != UIDUnknown && filter.IsUIDAllowed(uid) {
+		if engine.quicDrop.Load() && flow.serverPort == 443 {
+			if filter != nil && filter.HasAllowedUIDs() {
+				uid := resolveFlowUID(uidr, ProtocolUDP, flow)
+				if uid == UIDUnknown || filter.IsUIDAllowed(uid) {
+					_ = conn.Close()
+					return
+				}
+			} else {
 				_ = conn.Close()
 				return
 			}

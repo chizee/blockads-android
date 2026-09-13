@@ -6,7 +6,7 @@ package app.pwhs.blockads.ui.browser.rules
  */
 object BrowserRuleDefaults {
 
-    const val INITIAL_VERSION = 11L
+    const val INITIAL_VERSION = 14L
 
     val AD_HOST_SUFFIXES = listOf(
         "doubleclick.net",
@@ -55,6 +55,13 @@ object BrowserRuleDefaults {
         "adxmedia.com",
         "vlit.site",
         "vlit.xyz",
+        "potterynaggingformerly.com",
+        "apitiny.net",
+        "gatekeeperconsent.com",
+        "ezojs.com",
+        "ezoicanalytics.com",
+        "vcommission.com",
+        "impactradius-go.com",
         "exosrv.com",
         "tsyndicate.com",
         "tsyndication.com",
@@ -76,6 +83,7 @@ object BrowserRuleDefaults {
         "bytedapm.com",
         "adcenter.cx",
         "onezapp.com",
+        "acceptable.a-ads.com",
         "a-ads.com",
         "invl.me",
         "involve.asia",
@@ -280,6 +288,9 @@ object BrowserRuleDefaults {
         "/invoke.js",
         "/bn.js",
         "/sfp.js",
-        "/on.js"
+        "/on.js",
+        "/apitiny",
+        "ezoic",
+        "AdsScript"
     )
 }

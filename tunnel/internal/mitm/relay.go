@@ -198,6 +198,8 @@ func relayHTTPFlow(clientConn, serverConn net.Conn, hostname string, filter *Mit
 
 		if requestAcceptsHTML(req) {
 			req.Header.Del("Accept-Encoding")
+		} else if ae := req.Header.Get("Accept-Encoding"); ae != "" {
+			req.Header.Set("Accept-Encoding", "gzip, deflate")
 		}
 
 		SanitizeRequest(req, hostname)

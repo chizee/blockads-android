@@ -51,7 +51,7 @@ class HttpsFilteringViewModel(
     /** HTTP/3 (QUIC) filtering. Off = pages load fully (QUIC relayed);
      *  On = drop browser QUIC to force filterable TCP (more filtering,
      *  some sites may load partially). */
-    private val _filterHttp3 = MutableStateFlow(false)
+    private val _filterHttp3 = MutableStateFlow(true)
     val filterHttp3: StateFlow<Boolean> = _filterHttp3.asStateFlow()
 
     private val _browsers = MutableStateFlow<List<BrowserInfo>>(emptyList())

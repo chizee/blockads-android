@@ -435,15 +435,20 @@ class GoTunnelAdapter(
      */
     fun updateCosmeticRules() {
         try {
-            val cssPath = filterRepo.getCosmeticCssPath()
-            if (cssPath != null && java.io.File(cssPath).exists()) {
-                engine.setCosmeticCSSFromFile(cssPath)
-            } else {
-                engine.setCosmeticCSS("")
-            }
+            val css = TunnelRuleLoader.loadCosmeticCss(context)
+            engine.setCosmeticCSS(css)
+            Timber.d("Cosmetic CSS updated for engine: %d bytes", css.length)
         } catch (e: Exception) {
             Timber.e(e, "Failed to load cosmetic CSS for engine")
             engine.setCosmeticCSS("")
+        }
+
+        try {
+            val js = TunnelRuleLoader.loadScriptletsJs(context)
+            engine.setScriptletsRuntime(js)
+            Timber.d("Scriptlets runtime updated for engine: %d bytes", js.length)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to load scriptlets JS for engine")
         }
 
         try {
@@ -459,7 +464,7 @@ class GoTunnelAdapter(
         }
 
         try {
-            val patterns = filterRepo.getAdPathPatterns()
+            val patterns = TunnelRuleLoader.loadAdPathPatterns(context)
             engine.setAdPathPatterns(patterns)
             if (patterns.isNotEmpty()) {
                 Timber.d("Ad path patterns loaded: ${patterns.lines().size} patterns")

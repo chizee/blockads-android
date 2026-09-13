@@ -132,8 +132,15 @@ type adBlockChecker = AdBlockChecker
 // HTML document, not a subresource. Used to decide when to strip
 // Accept-Encoding so responses arrive uncompressed for injection.
 func requestAcceptsHTML(req *http.Request) bool {
-	accept := req.Header.Get("Accept")
-	return strings.Contains(strings.ToLower(accept), "text/html")
+	accept := strings.ToLower(req.Header.Get("Accept"))
+	if strings.Contains(accept, "text/html") {
+		return true
+	}
+	if req.Header.Get("Upgrade-Insecure-Requests") == "1" {
+		return true
+	}
+	path := strings.ToLower(req.URL.Path)
+	return path == "" || path == "/" || strings.HasSuffix(path, ".html") || strings.HasSuffix(path, ".htm") || !strings.Contains(path, ".")
 }
 
 // wrapResponseForInjection prepares an HTML response for in-stream

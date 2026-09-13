@@ -47,6 +47,7 @@
         // Anti-Adblock defusers (ACRP plugin on tech/mod apk sites like LeeAPK, InstaMod)
         window.__acrpGuard = true;
         window.acrpAdsAllowed = true;
+        window.ezstandalone = { cmd: { push: function() {} }, define: function() {}, enable: function() {}, display: function() {}, init: function() {}, refresh: function() {} };
         try {
             document.cookie = "acrp_is_premium=1; path=/";
             if (location.hostname.indexOf('instamod.app') !== -1) {
@@ -255,7 +256,8 @@
                 '#bottom-slider, .apkm-timed-slider, .ains, [class*="ains-"], .advertisement-text, [id*="ai_widget"]',
                 '.js-ad-slot, .ad-adsense, [data-dt-ga-name*="resp_download_"], .share-open, .download-vip-subscribe-wrap',
                 '#acrp-sticky-wrap, #acrp-sticky-inner, .acrp-sticky-close, .acrp-ad-box-1, [class*="acrp-ad"]',
-                '#random-ad, [id*="random-ad"], iframe[src*="a-ads.com"], [id^="__clb-spot"], .banners-all, .my_banner'
+                '#random-ad, [id*="random-ad"], iframe[src*="a-ads.com"], [id^="__clb-spot"], .banners-all, .my_banner',
+                'aside.ezoic-ad-slot, section[aria-label="Sponsored offers"], div[role="dialog"][aria-label="Sponsored offers"]'
             ];
             var adEls = document.querySelectorAll(adSelectors.join(','));
             for (var i = 0; i < adEls.length; i++) {
@@ -425,6 +427,7 @@
         window.adsbygoogle.loaded = true; window.adsbygoogle.push = function() {};
         window.showAdblockMessage = function() {};
         window.aclib = window.aclib || { runPop: function() {}, runInPagePush: function() {}, runAutoTag: function() {}, runBanner: function() {} };
+        try { Object.defineProperty(window, 'AcrpConfig', { get: function() { return undefined; }, set: function() {}, configurable: true }); } catch(e) {}
 
         // Defeat getComputedStyle & offsetHeight inspection on bait elements
         try {

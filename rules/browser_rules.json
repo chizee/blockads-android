@@ -1,6 +1,6 @@
 {
-  "version": 12,
-  "updatedAt": 1726207800000,
+  "version": 14,
+  "updatedAt": 1726215000000,
   "adDomains": [
     "doubleclick.net",
     "googleadservices.com",
@@ -48,6 +48,13 @@
     "adxmedia.com",
     "vlit.site",
     "vlit.xyz",
+    "potterynaggingformerly.com",
+    "apitiny.net",
+    "gatekeeperconsent.com",
+    "ezojs.com",
+    "ezoicanalytics.com",
+    "vcommission.com",
+    "impactradius-go.com",
     "exosrv.com",
     "tsyndicate.com",
     "tsyndication.com",
@@ -69,6 +76,7 @@
     "bytedapm.com",
     "adcenter.cx",
     "onezapp.com",
+    "acceptable.a-ads.com",
     "a-ads.com",
     "invl.me",
     "involve.asia",
@@ -291,7 +299,10 @@
     "/invoke.js",
     "/bn.js",
     "/sfp.js",
-    "/on.js"
+    "/on.js",
+    "/apitiny",
+    "ezoic",
+    "AdsScript"
   ],
   "cosmeticCss": "https://raw.githubusercontent.com/pass-with-high-score/blockads-android/main/app/src/main/assets/browser/adblock_cosmetic.css",
   "scriptletsJs": "https://raw.githubusercontent.com/pass-with-high-score/blockads-android/main/app/src/main/assets/browser/adguard_scriptlets.js"

@@ -104,6 +104,7 @@ class VpnTunnelBuilder(
                     .addAddress("fd00::2", 128)
                     .addRoute("fd00::1", 128)
                     .addDnsServer("fd00::1")
+                    .addRoute("::", 0)
                     .setBlocking(false)
                     .setMtu(1350)
                 addIpv4Routes(b, excludeLan)

@@ -312,6 +312,18 @@ func (e *Engine) SetCosmeticCSS(css string) {
 	SetCosmeticCSS(css)
 }
 
+// SetScriptletsRuntime sets the custom scriptlets JS (from browser_rules.json)
+// to be served at https://local.pwhs.app/scriptlets.js alongside Go's built-in runtime.
+func (e *Engine) SetScriptletsRuntime(js string) {
+	if js == "" {
+		SetScriptletsRuntime(scriptletRuntimeJS)
+		return
+	}
+	combined := scriptletRuntimeJS + "\n;\n" + js
+	SetScriptletsRuntime(combined)
+	logf("Scriptlets runtime updated: %d bytes (custom JS: %d bytes)", len(combined), len(js))
+}
+
 // SetAdPathPatterns loads URL path patterns that will be blocked (returning
 // 204 No Content) when intercepted by the HTTPS MITM proxy. Patterns are
 // matched as case-insensitive substrings of the request path so simple
