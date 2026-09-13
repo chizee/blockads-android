@@ -148,4 +148,22 @@
     <string name="filter_compile_success_title">Filter compiled</string>
     <string name="filter_compile_failed_title">Filter compilation failed</string>
     <string name="filter_compile_channel_name">Filter Compilation</string>
+
+    <!-- HTTPS Wizard Strings -->
+    <string name="https_wizard_title">Certificate Setup</string>
+    <string name="https_wizard_security_title">Security &amp; Privacy</string>
+    <string name="https_wizard_security_desc">The Root CA certificate is generated locally on your device and never leaves your phone. BlockAds uses it strictly to remove cosmetic ads on websites. Sensitive services such as banking apps and Google accounts are never intercepted.</string>
+    <string name="https_wizard_explain_title">Why HTTPS Filtering?</string>
+    <string name="https_wizard_explain_desc">Most modern websites and ads use encrypted HTTPS connections. To hide visual ad placeholders, banners, and floating popups, BlockAds requires a local certificate to inspect and filter web pages safely on your device.</string>
+    <string name="https_wizard_next">Continue</string>
+    <string name="https_wizard_prev">Back</string>
+    <string name="https_wizard_finish">Finish &amp; Enable</string>
+    <string name="https_wizard_root_title">Root Installation</string>
+    <string name="https_wizard_root_fast">Quick Install (User Store)</string>
+    <string name="https_wizard_root_fast_desc">Installed directly into user cert store. Takes effect immediately without needing a reboot.</string>
+    <string name="https_wizard_root_module">Install as System Module (Magisk)</string>
+    <string name="https_wizard_root_module_desc">Creates a Magisk/KernelSU system module. Requires a device reboot to activate as a system CA.</string>
+    <string name="https_wizard_copy_filename">Copy filename</string>
+    <string name="https_wizard_filename_copied">Certificate filename copied to clipboard</string>
+    <string name="https_wizard_verified_success">Certificate is verified and ready to use!</string>
 </resources>

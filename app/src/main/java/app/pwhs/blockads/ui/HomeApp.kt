@@ -53,6 +53,8 @@ import app.pwhs.blockads.ui.data.FilterKey
 import app.pwhs.blockads.ui.data.FireWallKey
 import app.pwhs.blockads.ui.data.HomeKey
 import app.pwhs.blockads.ui.data.HttpsFilteringKey
+import app.pwhs.blockads.ui.data.CertInstallationWizardKey
+import app.pwhs.blockads.ui.httpsfiltering.wizard.CertInstallationWizardScreen
 import app.pwhs.blockads.ui.data.LogsKey
 import app.pwhs.blockads.ui.data.ProfileKey
 import app.pwhs.blockads.ui.data.SettingsKey
@@ -359,6 +361,16 @@ fun HomeApp(
                 }
                 entry<HttpsFilteringKey> {
                     HttpsFilteringScreen(
+                        onNavigateBack = {
+                            safePop(settingsStack)
+                        },
+                        onNavigateToWizard = {
+                            settingsStack.add(CertInstallationWizardKey)
+                        }
+                    )
+                }
+                entry<CertInstallationWizardKey> {
+                    CertInstallationWizardScreen(
                         onNavigateBack = {
                             safePop(settingsStack)
                         }

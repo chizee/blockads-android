@@ -76,3 +76,6 @@ data class BrowserKey(val initialUrl: String = "https://m.youtube.com") : NavKey
 
 @Serializable
 data object ElementRulesKey : NavKey
+
+@Serializable
+data object CertInstallationWizardKey : NavKey

@@ -27,6 +27,7 @@ import app.pwhs.blockads.ui.splash.SplashViewModel
 import app.pwhs.blockads.ui.wireguard.WireGuardEditViewModel
 import app.pwhs.blockads.ui.wireguard.WireGuardImportViewModel
 import app.pwhs.blockads.ui.httpsfiltering.HttpsFilteringViewModel
+import app.pwhs.blockads.ui.httpsfiltering.wizard.CertInstallationWizardViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.cio.endpoint
@@ -270,6 +271,11 @@ val appModule = module {
     }
     viewModel {
         HttpsFilteringViewModel(
+            application = androidApplication()
+        )
+    }
+    viewModel {
+        CertInstallationWizardViewModel(
             application = androidApplication()
         )
     }

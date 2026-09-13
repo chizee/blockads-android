@@ -144,6 +144,23 @@
     <string name="https_filtering_cert_saved_legacy">Đã lưu chứng chỉ. Hãy cài đặt từ trình quản lý tệp.</string>
     <string name="https_filtering_started">Đã bật lọc HTTPS</string>
     <string name="https_filtering_stopped">Đã tắt lọc HTTPS</string>
-    <string name="https_filtering_http3_title">Lọc HTTP/3 (QUIC)</string>
     <string name="https_filtering_http3_desc">Chặn QUIC của trình duyệt để buộc các kết nối có thể lọc nhằm đạt được khả năng lọc quảng cáo tối đa. Có thể khiến một số trang chỉ tải một phần. Hãy tắt nếu các trang không tải hoàn toàn.</string>
+
+    <!-- HTTPS Wizard Strings -->
+    <string name="https_wizard_title">Cài đặt Chứng chỉ</string>
+    <string name="https_wizard_security_title">Bảo mật &amp; Quyền riêng tư</string>
+    <string name="https_wizard_security_desc">Chứng chỉ Root CA được tạo cục bộ ngay trên thiết bị của bạn và không bao giờ rời khỏi máy. BlockAds sử dụng nó để loại bỏ quảng cáo trên các trang web. Các dịch vụ nhạy cảm như ứng dụng ngân hàng và tài khoản Google hoàn toàn không bị can thiệp.</string>
+    <string name="https_wizard_explain_title">Tại sao cần lọc HTTPS?</string>
+    <string name="https_wizard_explain_desc">Hầu hết các trang web và quảng cáo hiện nay đều sử dụng kết nối HTTPS đã mã hóa. Để ẩn các khung quảng cáo, banner và popup phiền toái, BlockAds cần một chứng chỉ cục bộ để xử lý và lọc các trang web một cách an toàn trên máy bạn.</string>
+    <string name="https_wizard_next">Tiếp tục</string>
+    <string name="https_wizard_prev">Quay lại</string>
+    <string name="https_wizard_finish">Hoàn tất &amp; Bật lọc HTTPS</string>
+    <string name="https_wizard_root_title">Cài đặt bằng quyền Root</string>
+    <string name="https_wizard_root_fast">Cài đặt nhanh (Kho người dùng)</string>
+    <string name="https_wizard_root_fast_desc">Ghi trực tiếp vào kho chứng chỉ người dùng. Có hiệu lực ngay lập tức mà không cần khởi động lại máy.</string>
+    <string name="https_wizard_root_module">Cài đặt dạng Module Hệ thống (Magisk)</string>
+    <string name="https_wizard_root_module_desc">Tạo module Magisk/KernelSU. Cần khởi động lại máy để kích hoạt thành chứng chỉ hệ thống vĩnh viễn.</string>
+    <string name="https_wizard_copy_filename">Sao chép tên file</string>
+    <string name="https_wizard_filename_copied">Đã sao chép tên file chứng chỉ vào bộ nhớ tạm</string>
+    <string name="https_wizard_verified_success">Chứng chỉ đã được cài đặt và sẵn sàng hoạt động!</string>
 </resources>

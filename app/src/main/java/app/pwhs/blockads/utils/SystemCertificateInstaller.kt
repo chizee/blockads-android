@@ -56,8 +56,54 @@ object SystemCertificateInstaller {
     }
 
     /**
+     * Installs the CA certificate directly to the Android User CA Store via root.
+     * Path: /data/misc/user/0/cacerts-added/<hash>.0
+     *
+     * This takes effect IMMEDIATELY without needing a device reboot, because
+     * AndroidCAStore dynamically loads user certificates from /data.
+     */
+    fun installToUserStoreViaRoot(caPem: String): Result<String> {
+        if (!isRootAvailable()) {
+            return Result.failure(IllegalStateException("Root access is not available"))
+        }
+
+        return try {
+            val certFactory = CertificateFactory.getInstance("X.509")
+            val cert = certFactory.generateCertificate(
+                ByteArrayInputStream(caPem.toByteArray())
+            ) as X509Certificate
+
+            val hashOld = computeSubjectHashOld(cert)
+            val userStoreDir = "/data/misc/user/0/cacerts-added"
+            val certPath = "$userStoreDir/$hashOld.0"
+            val removedPath = "/data/misc/user/0/cacerts-removed/$hashOld.0"
+
+            val commands = listOf(
+                "mkdir -p $userStoreDir",
+                "cat << 'EOF' > $certPath\n$caPem\nEOF",
+                "chmod 644 $certPath",
+                "chown system:system $certPath 2>/dev/null || true",
+                "rm -f $removedPath"
+            )
+
+            val res = Shell.cmd(*commands.toTypedArray()).exec()
+            if (res.isSuccess) {
+                Timber.d("CA installed to user store via root successfully: $certPath")
+                Result.success(hashOld)
+            } else {
+                val err = res.err.joinToString("\n")
+                Timber.e("Failed to install CA to user store: $err")
+                Result.failure(RuntimeException(err))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Exception during user store root install")
+            Result.failure(e)
+        }
+    }
+
+    /**
      * Installs the CA certificate as a Magisk / KernelSU module so it mounts
-     * automatically into /system/etc/security/cacerts/.
+     * automatically into /system/etc/security/cacerts/ and Conscrypt APEX.
      */
     fun installToSystemStore(caPem: String): Result<String> {
         if (!isRootAvailable()) {
@@ -83,8 +129,8 @@ object SystemCertificateInstaller {
             val moduleProp = """
                 id=$MODULE_ID
                 name=BlockAds Root CA
-                version=1.0
-                versionCode=1
+                version=1.1
+                versionCode=2
                 author=BlockAds
                 description=System CA Certificate for BlockAds HTTPS Filtering
             """.trimIndent()
@@ -100,13 +146,26 @@ object SystemCertificateInstaller {
                 commands.add("chmod 644 $certPath2")
             }
 
-            // 4. Live overlay into current running system without reboot if supported
-            commands.add("mount -o remount,rw / 2>/dev/null || true")
-            commands.add("mount -o remount,rw /system 2>/dev/null || true")
-            for (hash in setOf(hashOld, hashSha1)) {
-                commands.add("cp $MODULE_DIR/system/etc/security/cacerts/$hash.0 /system/etc/security/cacerts/$hash.0 2>/dev/null || true")
-                commands.add("chmod 644 /system/etc/security/cacerts/$hash.0 2>/dev/null || true")
-            }
+            // 4. Also write service.sh to mount into Conscrypt APEX on boot for Android 14+
+            val serviceScript = """
+                #!/system/bin/sh
+                # Mount certificate into Conscrypt APEX on Android 14+
+                APEX_DIR="/apex/com.android.conscrypt/cacerts"
+                if [ -d "${'$'}APEX_DIR" ]; then
+                    mount -t tmpfs tmpfs "${'$'}APEX_DIR" 2>/dev/null || true
+                    cp /system/etc/security/cacerts/* "${'$'}APEX_DIR/" 2>/dev/null || true
+                    chmod 644 "${'$'}APEX_DIR"/* 2>/dev/null || true
+                fi
+            """.trimIndent()
+            commands.add("cat << 'EOF' > $MODULE_DIR/service.sh\n$serviceScript\nEOF")
+            commands.add("chmod 755 $MODULE_DIR/service.sh")
+
+            // 5. Also install immediately to user store so it works right away without reboot!
+            val userStoreDir = "/data/misc/user/0/cacerts-added"
+            commands.add("mkdir -p $userStoreDir")
+            commands.add("cat << 'EOF' > $userStoreDir/$hashOld.0\n$caPem\nEOF")
+            commands.add("chmod 644 $userStoreDir/$hashOld.0")
+            commands.add("chown system:system $userStoreDir/$hashOld.0 2>/dev/null || true")
 
             val res = Shell.cmd(*commands.toTypedArray()).exec()
             if (res.isSuccess) {
