@@ -21,6 +21,38 @@
         } catch (e) {}
     }
 
+    function stripFeedAdRenderers(obj) {
+        if (!obj || typeof obj !== 'object') return;
+        if (Array.isArray(obj)) {
+            for (var i = obj.length - 1; i >= 0; i--) {
+                var item = obj[i];
+                if (item && typeof item === 'object') {
+                    if (item.adSlotRenderer || item.promotedSparklesWebRenderer ||
+                        item.inFeedAdLayoutRenderer || item.statementBannerRenderer ||
+                        item.brandVideoSingletonRenderer || item.promotedVideoRenderer ||
+                        item.brandVideoShelfRenderer) {
+                        obj.splice(i, 1);
+                        continue;
+                    }
+                }
+                stripFeedAdRenderers(obj[i]);
+            }
+        } else {
+            for (var k in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, k)) {
+                    if (k === 'adSlotRenderer' || k === 'promotedSparklesWebRenderer' ||
+                        k === 'inFeedAdLayoutRenderer' || k === 'statementBannerRenderer' ||
+                        k === 'brandVideoSingletonRenderer' || k === 'promotedVideoRenderer' ||
+                        k === 'brandVideoShelfRenderer') {
+                        delete obj[k];
+                    } else if (typeof obj[k] === 'object') {
+                        stripFeedAdRenderers(obj[k]);
+                    }
+                }
+            }
+        }
+    }
+
     function sanitizeData(data) {
         if (!data || typeof data !== 'object') return data;
         try {
@@ -28,6 +60,7 @@
             if (data.adPlacements) delete data.adPlacements;
             if (data.adSlots) delete data.adSlots;
             if (data.adPlacementConfig) delete data.adPlacementConfig;
+            if (data.masthead) delete data.masthead;
 
             // Remove ads in auxiliaryUi (interstitial dialogs / upsells)
             if (data.auxiliaryUi && data.auxiliaryUi.messageRenderers) {
@@ -41,6 +74,9 @@
                 delete data.playbackTracking.videostatsDelayplayUrl;
                 delete data.playbackTracking.videostatsWatchtimeUrl;
             }
+
+            // Strip home feed, search, and browse ad renderers
+            stripFeedAdRenderers(data);
         } catch (e) {}
         return data;
     }
@@ -77,7 +113,7 @@
         window.fetch = async function() {
             var response = await originalFetch.apply(this, arguments);
             var url = typeof arguments[0] === 'string' ? arguments[0] : (arguments[0] && arguments[0].url);
-            if (url && typeof url === 'string' && url.indexOf('/youtubei/v1/player') !== -1) {
+            if (url && typeof url === 'string' && (url.indexOf('/youtubei/v1/player') !== -1 || url.indexOf('/youtubei/v1/browse') !== -1 || url.indexOf('/youtubei/v1/next') !== -1 || url.indexOf('/youtubei/v1/search') !== -1)) {
                 try {
                     var clone = response.clone();
                     var json = await clone.json();
@@ -101,7 +137,7 @@
         return originalXHROpen.apply(this, arguments);
     };
     XMLHttpRequest.prototype.send = function() {
-        if (this._blockads_url && typeof this._blockads_url === 'string' && this._blockads_url.indexOf('/youtubei/v1/player') !== -1) {
+        if (this._blockads_url && typeof this._blockads_url === 'string' && (this._blockads_url.indexOf('/youtubei/v1/player') !== -1 || this._blockads_url.indexOf('/youtubei/v1/browse') !== -1 || this._blockads_url.indexOf('/youtubei/v1/next') !== -1 || this._blockads_url.indexOf('/youtubei/v1/search') !== -1)) {
             this.addEventListener('readystatechange', function() {
                 if (this.readyState === 4 && this.responseText) {
                     try {
@@ -120,6 +156,32 @@
     // 5. Fallback auto-skip & fast-forward loop for live or stitched ads
     setInterval(function() {
         try {
+            // Purge home feed & masthead ad banners from DOM
+            var bannerSelectors = [
+                'ytm-promoted-sparkles-web-renderer',
+                'ytm-companion-ad-renderer',
+                'ytm-ad-slot-renderer',
+                'ytm-statement-banner-renderer',
+                'ytm-brand-video-singleton-renderer',
+                'ytm-in-feed-ad-layout-renderer',
+                '#masthead-ad'
+            ];
+            for (var b = 0; b < bannerSelectors.length; b++) {
+                var bEls = document.querySelectorAll(bannerSelectors[b]);
+                for (var k = 0; k < bEls.length; k++) {
+                    var p = bEls[k].closest('ytm-rich-item-renderer, ytm-rich-section-renderer, ytm-item-section-renderer') || bEls[k];
+                    p.remove();
+                }
+            }
+            var badges = document.querySelectorAll('yt-metadata-badge-renderer, ytm-badge-and-byline-renderer, badge-shape, .badge');
+            for (var bi = 0; bi < badges.length; bi++) {
+                var bt = (badges[bi].textContent || '').trim().toLowerCase();
+                if (bt === 'sponsored' || bt === 'được tài trợ' || bt === 'quảng cáo' || bt === 'ad') {
+                    var card = badges[bi].closest('ytm-rich-item-renderer, ytm-video-with-context-renderer, ytm-item-section-renderer, ytm-rich-section-renderer');
+                    if (card) card.remove();
+                }
+            }
+
             // Click skip buttons
             var skipSelectors = [
                 '.ytp-ad-skip-button',

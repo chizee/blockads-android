@@ -3,25 +3,19 @@
 /* ========================================================
    1. YouTube Mobile Web Ad Elements
    ======================================================== */
-ytd-promoted-video-renderer,
-ytd-display-ad-renderer,
-ytd-statement-banner-renderer,
-ytd-banner-promo-renderer,
-ytd-in-feed-ad-layout-renderer,
-ytm-promoted-sparkles-web-renderer,
-ytm-companion-ad-renderer,
-ytm-promoted-sparkles-text-search-web-renderer,
-ytm-ad-slot-renderer,
-.ytp-ad-module,
-.ytp-ad-overlay-container,
-.ytp-ad-player-overlay,
-.ytp-ad-image-overlay,
-.ytp-ad-overlay-slot,
-#player-ads,
-.sparkles-light-cta,
-#masthead-ad,
-ytd-merch-shelf-renderer,
-.video-ads,
+ytd-promoted-video-renderer, ytd-display-ad-renderer, ytd-statement-banner-renderer,
+ytd-banner-promo-renderer, ytd-in-feed-ad-layout-renderer, ytd-ad-slot-renderer,
+ytm-promoted-sparkles-web-renderer, ytm-companion-ad-renderer, ytm-ad-slot-renderer,
+ytm-promoted-sparkles-text-search-web-renderer, ytm-statement-banner-renderer,
+ytm-brand-video-singleton-renderer, ytm-brand-video-shelf-renderer,
+ytm-feed-ad-metadata-renderer, ytm-compact-promoted-item-renderer,
+ytm-promoted-video-renderer, ytm-in-feed-ad-layout-renderer,
+ytm-rich-item-renderer:has(ytm-ad-slot-renderer),
+ytm-rich-item-renderer:has(ytm-promoted-sparkles-web-renderer),
+ytm-rich-section-renderer:has(ytm-statement-banner-renderer),
+.ytp-ad-module, .ytp-ad-overlay-container, .ytp-ad-player-overlay,
+.ytp-ad-image-overlay, .ytp-ad-overlay-slot, #player-ads, .sparkles-light-cta,
+#masthead-ad, ytd-merch-shelf-renderer, .video-ads,
 
 /* ========================================================
    2. Google AdSense, DoubleClick & Publisher Tags
