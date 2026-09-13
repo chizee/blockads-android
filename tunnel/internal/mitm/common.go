@@ -98,29 +98,23 @@ func resolveFlowUID(uidr UIDResolver, protocol int, flow flowID) int {
 }
 
 func tcpFlowID(conn adapter.TCPConn) flowID {
-	var f flowID
-	if addr, ok := conn.LocalAddr().(*net.TCPAddr); ok {
-		f.clientIP = addr.IP
-		f.clientPort = uint16(addr.Port)
+	id := conn.ID()
+	return flowID{
+		clientIP:   net.IP(id.RemoteAddress.AsSlice()),
+		clientPort: uint16(id.RemotePort),
+		serverIP:   net.IP(id.LocalAddress.AsSlice()),
+		serverPort: uint16(id.LocalPort),
 	}
-	if addr, ok := conn.RemoteAddr().(*net.TCPAddr); ok {
-		f.serverIP = addr.IP
-		f.serverPort = uint16(addr.Port)
-	}
-	return f
 }
 
 func udpFlowID(conn adapter.UDPConn) flowID {
-	var f flowID
-	if addr, ok := conn.LocalAddr().(*net.UDPAddr); ok {
-		f.clientIP = addr.IP
-		f.clientPort = uint16(addr.Port)
+	id := conn.ID()
+	return flowID{
+		clientIP:   net.IP(id.RemoteAddress.AsSlice()),
+		clientPort: uint16(id.RemotePort),
+		serverIP:   net.IP(id.LocalAddress.AsSlice()),
+		serverPort: uint16(id.LocalPort),
 	}
-	if addr, ok := conn.RemoteAddr().(*net.UDPAddr); ok {
-		f.serverIP = addr.IP
-		f.serverPort = uint16(addr.Port)
-	}
-	return f
 }
 
 // AdBlockChecker is the interface the MITM handler uses to query the ad-block engine.
