@@ -227,7 +227,7 @@ fun TrustedNetworksScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(96.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

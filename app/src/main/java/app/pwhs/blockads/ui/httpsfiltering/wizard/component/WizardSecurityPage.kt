@@ -1,6 +1,8 @@
 package app.pwhs.blockads.ui.httpsfiltering.wizard.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalance
 import androidx.compose.material.icons.outlined.Lock
@@ -39,25 +42,31 @@ fun WizardSecurityPage(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
     ) {
         // Hero Icon
         Box(
             modifier = Modifier
-                .size(72.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.tertiaryContainer),
+                .size(64.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.tertiaryContainer)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(20.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Outlined.Lock,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(32.dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         Text(
             text = stringResource(R.string.https_wizard_security_title),
@@ -66,7 +75,7 @@ fun WizardSecurityPage(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(R.string.https_wizard_security_desc),
@@ -80,25 +89,27 @@ fun WizardSecurityPage(
         // Security Highlights
         SecurityItem(
             icon = Icons.Outlined.PhonelinkLock,
-            title = "100% Cục bộ trên máy (On-device)",
-            desc = "Khóa bảo mật và chứng chỉ được tạo ngẫu nhiên trên thiết bị của bạn. Không bao giờ gửi ra ngoài mạng."
+            title = stringResource(R.string.https_wizard_privacy_on_device_title),
+            desc = stringResource(R.string.https_wizard_privacy_on_device_desc)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         SecurityItem(
             icon = Icons.Outlined.AccountBalance,
-            title = "Bỏ qua ứng dụng Ngân hàng & Tài chính",
-            desc = "Các tên miền nhạy cảm (ngân hàng Việt Nam, Google, định danh số) luôn được chuyển tiếp trực tiếp và không bao giờ bị giải mã."
+            title = stringResource(R.string.https_wizard_privacy_bypass_title),
+            desc = stringResource(R.string.https_wizard_privacy_bypass_desc)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         SecurityItem(
             icon = Icons.Outlined.VerifiedUser,
-            title = "Chỉ lọc các trình duyệt được cấp phép",
-            desc = "Bạn có toàn quyền chọn hoặc bỏ chọn trình duyệt nào được áp dụng bộ lọc HTTPS."
+            title = stringResource(R.string.https_wizard_privacy_browser_title),
+            desc = stringResource(R.string.https_wizard_privacy_browser_desc)
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
@@ -110,23 +121,35 @@ private fun SecurityItem(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+        ),
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
         )
     ) {
         Row(
-            modifier = Modifier.padding(14.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.size(24.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
             Spacer(modifier = Modifier.width(14.dp))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
@@ -137,7 +160,8 @@ private fun SecurityItem(
                 Text(
                     text = desc,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
                 )
             }
         }

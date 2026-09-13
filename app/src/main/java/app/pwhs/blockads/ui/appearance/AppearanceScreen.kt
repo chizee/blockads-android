@@ -137,7 +137,7 @@ fun AppearanceScreen(
                 onSelectLanguage = { viewModel.setAppLanguage(it) }
             )
 
-            Spacer(modifier = Modifier.height(96.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 

@@ -1,9 +1,14 @@
 package app.pwhs.blockads.ui.httpsfiltering.wizard.component
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,12 +26,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,9 +39,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -77,12 +83,23 @@ fun WizardVerifyPage(
 
 @Composable
 private fun InstalledContent(onFinish: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Success Badge with glow container
         Box(
             modifier = Modifier
                 .size(80.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                    shape = CircleShape
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -93,7 +110,7 @@ private fun InstalledContent(onFinish: () -> Unit) {
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(22.dp))
 
         Text(
             text = stringResource(R.string.https_wizard_verified_success),
@@ -102,12 +119,13 @@ private fun InstalledContent(onFinish: () -> Unit) {
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = "Chứng chỉ BlockAds đã được phát hiện trong kho tin cậy của thiết bị. Bây giờ bạn có thể hoàn tất cài đặt và kích hoạt lọc HTTPS.",
+            text = stringResource(R.string.https_wizard_installed_desc),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -117,10 +135,7 @@ private fun InstalledContent(onFinish: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
+            shape = RoundedCornerShape(14.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
@@ -134,28 +149,70 @@ private fun InstalledContent(onFinish: () -> Unit) {
                 fontWeight = FontWeight.Bold
             )
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Composable
 private fun CheckingContent() {
+    val infiniteTransition = rememberInfiniteTransition(label = "pulseTransition")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.35f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseScale"
+    )
+
     Column(
-        modifier = Modifier.padding(vertical = 40.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(64.dp),
-            strokeWidth = 4.dp
-        )
+        Box(
+            modifier = Modifier.size(96.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Pulsing background ring
+            Box(
+                modifier = Modifier
+                    .size(72.dp)
+                    .scale(pulseScale)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+            )
+
+            CircularProgressIndicator(
+                modifier = Modifier.size(68.dp),
+                strokeWidth = 3.5.dp,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Icon(
+                imageVector = Icons.Outlined.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(28.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
+
         Text(
-            text = "Đang kiểm tra chứng chỉ...",
+            text = stringResource(R.string.https_wizard_checking_title),
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
         )
-        Spacer(modifier = Modifier.height(8.dp))
+
+        Spacer(modifier = Modifier.height(6.dp))
+
         Text(
-            text = "Đang tra cứu kho chứng chỉ tin cậy của Android",
+            text = stringResource(R.string.https_wizard_checking_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -167,86 +224,96 @@ private fun NotInstalledContent(
     onVerify: () -> Unit,
     onPrevStep: () -> Unit
 ) {
-    Column {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // Hero Icon
         Box(
             modifier = Modifier
-                .size(72.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.errorContainer),
+                .size(64.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(MaterialTheme.colorScheme.errorContainer)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(20.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Outlined.WarningAmber,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(32.dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         Text(
-            text = "Chưa phát hiện chứng chỉ",
+            text = stringResource(R.string.https_wizard_not_installed_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "BlockAds chưa tìm thấy chứng chỉ trong kho chứng chỉ CA của máy. Nếu bạn vừa cài đặt xong qua Cài đặt, hãy nhấn nút bên dưới để kiểm tra lại.",
+            text = stringResource(R.string.https_wizard_not_installed_desc),
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // Troubleshooting Card
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(18.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+            ),
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
             )
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.HelpOutline,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Mẹo khắc phục sự cố:",
+                        text = stringResource(R.string.https_wizard_troubleshooting_title),
                         style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
-                Text(
-                    text = "• Đảm bảo bạn đã chọn loại 'Chứng chỉ CA' (không phải Chứng chỉ người dùng hay VPN).\n• Nếu cài đặt Magisk Module, bạn cần khởi động lại máy để có hiệu lực.\n• Kiểm tra xem file chứng chỉ tải về đã đúng định dạng .crt trong thư mục Downloads chưa.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
-                )
+                TipBullet(text = stringResource(R.string.https_wizard_troubleshooting_tip1))
+                Spacer(modifier = Modifier.height(10.dp))
+                TipBullet(text = stringResource(R.string.https_wizard_troubleshooting_tip2))
+                Spacer(modifier = Modifier.height(10.dp))
+                TipBullet(text = stringResource(R.string.https_wizard_troubleshooting_tip3))
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Actions
+        // Primary: Verify again
         Button(
             onClick = onVerify,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp)
+                .height(50.dp),
+            shape = RoundedCornerShape(14.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Refresh,
@@ -255,26 +322,51 @@ private fun NotInstalledContent(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Kiểm tra lại",
-                fontWeight = FontWeight.SemiBold
+                text = stringResource(R.string.https_wizard_retry_verify),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
             )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // Secondary: Back to install step
         OutlinedButton(
             onClick = onPrevStep,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp)
+                .height(50.dp),
+            shape = RoundedCornerShape(14.dp)
         ) {
             Text(
-                text = "Quay lại bước cài đặt",
+                text = stringResource(R.string.https_wizard_back_to_install),
+                style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold
             )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+@Composable
+private fun TipBullet(text: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) {
+        Text(
+            text = "•",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+        )
     }
 }

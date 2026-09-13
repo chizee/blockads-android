@@ -7,9 +7,10 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,10 +45,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -71,7 +70,6 @@ fun CertInstallationWizardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    val clipboardManager = LocalClipboardManager.current
 
     val settingsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -79,7 +77,7 @@ fun CertInstallationWizardScreen(
         viewModel.processIntent(CertInstallationWizardUiIntent.VerifyCert)
     }
 
-    // Handle back button presses in Android
+    // Handle system back navigation to navigate between steps or exit
     BackHandler(enabled = true) {
         if (uiState.currentStep.ordinal > 0) {
             viewModel.processIntent(CertInstallationWizardUiIntent.PrevStep)
@@ -105,7 +103,9 @@ fun CertInstallationWizardScreen(
                     onNavigateBack()
                 }
                 is CertInstallationWizardUiEffect.CopyToClipboard -> {
-                    clipboardManager.setText(AnnotatedString(effect.text))
+                    val clipboard = context.getSystemService(android.content.ClipboardManager::class.java)
+                    val clip = android.content.ClipData.newPlainText("cert_filename", effect.text)
+                    clipboard?.setPrimaryClip(clip)
                     snackbarHostState.showSnackbar(context.getString(R.string.https_wizard_filename_copied))
                 }
             }
@@ -142,7 +142,8 @@ fun CertInstallationWizardScreen(
             )
         },
         bottomBar = {
-            if (uiState.currentStep != WizardStep.VERIFY || uiState.certStatus != CertStatus.INSTALLED) {
+            val hideBottomBar = uiState.currentStep == WizardStep.VERIFY && uiState.certStatus == CertStatus.INSTALLED
+            if (!hideBottomBar) {
                 WizardBottomNav(
                     currentStep = uiState.currentStep,
                     onPrev = { viewModel.processIntent(CertInstallationWizardUiIntent.PrevStep) },
@@ -157,7 +158,7 @@ fun CertInstallationWizardScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Step progression indicator
+            // Segmented Step Indicator
             WizardStepIndicator(
                 currentStep = uiState.currentStep,
                 onStepClick = { step ->
@@ -168,17 +169,22 @@ fun CertInstallationWizardScreen(
                     .padding(vertical = 12.dp)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            // Animated step page container
+            // Slide & Fade step transition
             AnimatedContent(
                 targetState = uiState.currentStep,
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(220)) togetherWith
-                            fadeOut(animationSpec = tween(180))
+                    if (targetState.ordinal > initialState.ordinal) {
+                        (slideInHorizontally(tween(280)) { it / 2 } + fadeIn(tween(280))) togetherWith
+                                (slideOutHorizontally(tween(220)) { -it / 2 } + fadeOut(tween(220)))
+                    } else {
+                        (slideInHorizontally(tween(280)) { -it / 2 } + fadeIn(tween(280))) togetherWith
+                                (slideOutHorizontally(tween(220)) { it / 2 } + fadeOut(tween(220)))
+                    }
                 },
                 modifier = Modifier.weight(1f),
-                label = "WizardStepTransition"
+                label = "WizardStepSlideTransition"
             ) { step ->
                 when (step) {
                     WizardStep.EXPLANATION -> {
@@ -193,7 +199,9 @@ fun CertInstallationWizardScreen(
                             isExported = uiState.isCertExported,
                             onExport = { viewModel.processIntent(CertInstallationWizardUiIntent.ExportCert) },
                             onCopyFileName = {
-                                clipboardManager.setText(AnnotatedString(uiState.fileName))
+                                val clipboard = context.getSystemService(android.content.ClipboardManager::class.java)
+                                val clip = android.content.ClipData.newPlainText("cert_filename", uiState.fileName)
+                                clipboard?.setPrimaryClip(clip)
                             }
                         )
                     }
@@ -239,7 +247,7 @@ private fun WizardBottomNav(
                 .navigationBarsPadding()
         ) {
             HorizontalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
             )
             Row(
                 modifier = Modifier
@@ -251,11 +259,18 @@ private fun WizardBottomNav(
                 if (currentStep.ordinal > 0) {
                     OutlinedButton(
                         onClick = onPrev,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(14.dp)
                     ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = stringResource(R.string.https_wizard_prev),
-                            fontWeight = FontWeight.Medium
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 } else {
@@ -265,11 +280,12 @@ private fun WizardBottomNav(
                 if (currentStep != WizardStep.VERIFY) {
                     Button(
                         onClick = onNext,
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(14.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.https_wizard_next),
-                            fontWeight = FontWeight.SemiBold
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Icon(

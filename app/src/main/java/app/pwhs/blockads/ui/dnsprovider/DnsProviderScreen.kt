@@ -166,10 +166,7 @@ fun DnsProviderScreen(
                 )
             }
 
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-            item {
-                Spacer(modifier = Modifier.height(200.dp))
-            }
+            item { Spacer(modifier = Modifier.height(24.dp)) }
         }
     }
 
