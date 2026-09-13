@@ -77,13 +77,19 @@ func NewMitmTcpHandler(
 		// Gate -1 — DNS-over-TLS (port 853). Under full-tunnel routing the
 		// system's Private DNS resolver probes DoT against our fake DNS
 		// server (10.0.0.1 / fd00::1), which isn't a real host — the dial
+		// Gate -1 — DNS-over-TLS (port 853). Under full-tunnel routing the
+		// system's Private DNS resolver probes DoT against our fake DNS
+		// server (100.64.100.1 / fd00::1), which isn't a real host — the dial
 		// would hang for flowDialTimeout (10s) and stall all DNS. Close
 		// immediately so Android falls back to plaintext DNS on port 53,
 		// which the engine intercepts and filters. Mirrors the fake-DNS /
 		// force-port-53 approach already used in WireGuard mode.
-		// Gate -1 — DoT (port 853). If DoH/DoT blocking is enabled, close connection
-		// so client falls back to port 53 DNS.
-		if blocker != nil && blocker.IsDoHBlockingEnabled() && flow.serverPort == 853 {
+		if flow.serverPort == 853 {
+			return
+		}
+
+		// Never attempt to dial our virtual TUN DNS IPs on non-DNS ports
+		if flow.serverIP.String() == "100.64.100.1" || flow.serverIP.String() == "fd00::1" {
 			return
 		}
 
@@ -144,17 +150,19 @@ func NewMitmTcpHandler(
 			return
 		}
 
-		// Gate 4 — browser allowlist (UID). When Kotlin has configured
-		// an allowlist, non-allowed UIDs get passthrough. If UID is
-		// unknown (API < 29, resolver failure), err on the safe side:
-		// passthrough rather than MITM an unknown app.
-		if filter.HasAllowedUIDs() && (uid == UIDUnknown || !filter.IsUIDAllowed(uid)) {
-			relayDirectPeeked(conn, peekedReader, flow, hostname, blocker, protectFn)
+		// Gate 4 — ad-block blocker (by SNI / Host).
+		// Must run BEFORE browser UID allowlist check so ad/tracker domains
+		// are blocked for ALL apps (both browsers and non-browsers like SayDuo).
+		if blocker != nil && blocker.IsDomainBlocked(hostname) {
 			return
 		}
 
-		// Gate 5 — ad-block blocker.
-		if blocker != nil && blocker.IsDomainBlocked(hostname) {
+		// Gate 5 — browser allowlist (UID). When Kotlin has configured
+		// an allowlist, non-allowed UIDs get passthrough (no MITM decryption / cosmetic injection).
+		// If UID is unknown (API < 29, resolver failure), err on the safe side:
+		// passthrough rather than MITM an unknown app.
+		if filter.HasAllowedUIDs() && (uid == UIDUnknown || !filter.IsUIDAllowed(uid)) {
+			relayDirectPeeked(conn, peekedReader, flow, hostname, blocker, protectFn)
 			return
 		}
 

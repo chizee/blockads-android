@@ -264,8 +264,11 @@ func newFullPassthroughTcpHandler(engine *Engine, uidr UIDResolver, protectFn fu
 	return func(conn adapter.TCPConn) {
 		defer conn.Close()
 		flow := tcpFlowID(conn)
-		// Gate -1: DoT (port 853) - close to force fallback to port 53 DNS if DoH/DoT blocking is enabled
-		if engine.IsDoHBlockingEnabled() && flow.serverPort == 853 {
+		// Gate -1: DoT (port 853) - close to force fallback to port 53 DNS
+		if flow.serverPort == 853 {
+			return
+		}
+		if flow.serverIP.String() == "100.64.100.1" || flow.serverIP.String() == "fd00::1" {
 			return
 		}
 		// Gate -1.5: Hardcoded DoH Direct-IP (port 443) - close to force fallback if DoH/DoT blocking is enabled
