@@ -1,5 +1,14 @@
 /* BlockAds ExtendedCSS Cosmetic Filter */
 
+/* Conceal ad video immediately during in-stream ad playback so frames never flash */
+.ad-showing video,
+.ad-interrupting video,
+.html5-video-player.ad-showing video,
+.html5-video-player.ad-interrupting video {
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
 /* ========================================================
    1. YouTube Mobile Web Ad Elements
    ======================================================== */
@@ -14,6 +23,7 @@ ytm-rich-item-renderer:has(ytm-ad-slot-renderer),
 ytm-rich-item-renderer:has(ytm-promoted-sparkles-web-renderer),
 ytm-rich-section-renderer:has(ytm-statement-banner-renderer),
 .ytp-ad-module, .ytp-ad-overlay-container, .ytp-ad-player-overlay,
+.ytp-ad-player-overlay-layout, .ytp-ad-text, .ytp-ad-preview-container,
 .ytp-ad-image-overlay, .ytp-ad-overlay-slot, #player-ads, .sparkles-light-cta,
 #masthead-ad, ytd-merch-shelf-renderer, .video-ads,
 
@@ -33,26 +43,10 @@ div[class*="google_ads"],
 /* ========================================================
    3. Generic Banner, Box, Container & Sponsored Elements
    ======================================================== */
-.ad-banner,
-.ad-banners,
-.ad-box,
-.ad-boxes,
-.ad-container,
-.ad-wrapper,
-.ad-holder,
-.ad-slot,
-.ad-space,
-.ad-placement,
-.ad-label,
-.advertisement,
-.advertisements,
-.advertising,
-.sponsor-banner,
-.sponsor-box,
-.sponsored-post,
-.sponsored-content,
-.sponsored-label,
-div[class*="ad-container"],
+.ad-banner, .ad-banners, .ad-box, .ad-boxes, .ad-container, .ad-wrapper,
+.ad-holder, .ad-slot, .ad-space, .ad-placement, .ad-label, .advertisement,
+.advertisements, .advertising, .sponsor-banner, .sponsor-box, .sponsored-post,
+.sponsored-content, .sponsored-label, div[class*="ad-container"],
 div[class*="ad-wrapper"],
 div[class*="banner-ads"],
 div[class*="ads-holder"],

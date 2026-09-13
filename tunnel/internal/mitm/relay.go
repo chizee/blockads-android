@@ -186,11 +186,26 @@ func relayHTTPFlow(clientConn, serverConn net.Conn, hostname string, filter *Mit
 
 		// Block ad path patterns (e.g. /pagead, /ads.js). Return 204 instead
 		// of 403 so browsers don't show broken-image or error indicators.
+		// For JSON endpoints (e.g. /ad_break, /get_midroll_info), return 200 with "{}"
+		// so JSON clients don't fail with JSON syntax errors or stall on black screen.
 		if filter != nil && filter.IsAdPathBlocked(req.URL.Path) {
+			if strings.Contains(req.URL.Path, "/ad_break") || strings.Contains(req.URL.Path, "/get_midroll_info") || strings.HasSuffix(req.URL.Path, ".json") {
+				jsonResp := &http.Response{
+					StatusCode: 200,
+					ProtoMajor: 1, ProtoMinor: 1,
+					Header:     make(http.Header),
+					Body:       io.NopCloser(strings.NewReader("{}")),
+				}
+				jsonResp.Header.Set("Content-Type", "application/json; charset=utf-8")
+				jsonResp.Header.Set("Content-Length", "2")
+				jsonResp.Header.Set("Connection", "keep-alive")
+				jsonResp.Write(clientConn)
+				continue
+			}
 			noContentResp := &http.Response{
 				StatusCode: 204,
 				ProtoMajor: 1, ProtoMinor: 1,
-				Header:    make(http.Header),
+				Header:     make(http.Header),
 				Body:       io.NopCloser(strings.NewReader("")),
 			}
 			noContentResp.Header.Set("Connection", "keep-alive")

@@ -32,8 +32,8 @@ import (
 //     parsing the host server-side: the runtime fetch happens once
 //     per host, browser caches the response.
 const injectionTags = `<link rel="stylesheet" href="https://local.pwhs.app/cosmetic.css">` +
-	`<script src="https://local.pwhs.app/scriptlets.js" async></script>` +
-	`<script>(function(){var s=document.createElement('script');s.async=true;` +
+	`<script src="https://local.pwhs.app/scriptlets.js"></script>` +
+	`<script>(function(){var s=document.createElement('script');` +
 	`s.src='https://local.pwhs.app/sl-'+encodeURIComponent(location.hostname)+'.js';` +
 	`(document.head||document.documentElement).appendChild(s);})();</script>`
 
