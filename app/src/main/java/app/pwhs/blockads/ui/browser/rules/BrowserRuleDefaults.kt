@@ -6,7 +6,7 @@ package app.pwhs.blockads.ui.browser.rules
  */
 object BrowserRuleDefaults {
 
-    const val INITIAL_VERSION = 7L
+    const val INITIAL_VERSION = 10L
 
     val AD_HOST_SUFFIXES = listOf(
         "doubleclick.net",
@@ -226,7 +226,19 @@ object BrowserRuleDefaults {
         "vivodemisrentas.net",
         "bionomysolera.com",
         "fagoklaer.ru",
-        "gahakoleir.ru"
+        "gahakoleir.ru",
+        // InstaMod / Mod APK ad & popunder networks
+        "cleverwebserver.com",
+        "adsboosters.xyz",
+        "92mim.com",
+        "tzegilo.com",
+        "vr-gc.com",
+        "dd133.com",
+        "excidekombu.com",
+        "becorsolaom.com",
+        "fantastindents.com",
+        "apps2app.com",
+        "offerflowtogo.com"
     )
 
     val GAMBLING_POPUNDER_KEYWORDS = listOf(

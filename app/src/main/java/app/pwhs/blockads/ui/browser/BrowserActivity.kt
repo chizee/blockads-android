@@ -13,11 +13,15 @@ import android.util.Rational
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import app.pwhs.blockads.data.datastore.AppPreferences
+import app.pwhs.blockads.ui.browser.elementrules.ElementRulesScreen
 import app.pwhs.blockads.ui.theme.BlockadsTheme
 import app.pwhs.blockads.utils.LocaleHelper
 import kotlinx.coroutines.flow.first
@@ -70,14 +74,26 @@ class BrowserActivity : ComponentActivity() {
             val appPrefs: AppPreferences = getKoin().get()
             val themeMode by appPrefs.themeMode.collectAsState(initial = AppPreferences.THEME_SYSTEM)
             val accentColor by appPrefs.accentColor.collectAsState(initial = AppPreferences.ACCENT_GREEN)
+            var showElementRules by remember { mutableStateOf(false) }
 
             BlockadsTheme(themeMode = themeMode, accentColor = accentColor) {
-                BrowserScreen(
-                    initialUrl = _currentUrl.value,
-                    isInPipMode = _isInPipMode.value,
-                    onEnterPip = { enterPipMode() },
-                    onCloseBrowser = { finish() }
-                )
+                BackHandler(enabled = showElementRules) {
+                    showElementRules = false
+                }
+
+                if (showElementRules) {
+                    ElementRulesScreen(
+                        onNavigateBack = { showElementRules = false }
+                    )
+                } else {
+                    BrowserScreen(
+                        initialUrl = _currentUrl.value,
+                        isInPipMode = _isInPipMode.value,
+                        onEnterPip = { enterPipMode() },
+                        onCloseBrowser = { finish() },
+                        onNavigateToElementRules = { showElementRules = true }
+                    )
+                }
             }
         }
         updatePipParams()

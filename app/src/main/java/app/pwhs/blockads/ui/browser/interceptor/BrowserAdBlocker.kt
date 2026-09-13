@@ -336,6 +336,29 @@ object BrowserAdBlocker {
         }
     }
 
+    fun injectUserElementRules(view: WebView?, selectors: List<String>) {
+        if (view == null) return
+        if (selectors.isEmpty()) {
+            val clearJs = "(function(){ var el = document.getElementById('__blockads_user_css__'); if(el) el.remove(); })();"
+            view.evaluateJavascript(clearJs, null)
+            return
+        }
+        val combined = selectors.joinToString(",") { it.trim() }
+        val escaped = combined.replace("\\", "\\\\").replace("'", "\\'")
+        val js = """(function(){
+            try {
+                var el = document.getElementById('__blockads_user_css__');
+                if (!el) {
+                    el = document.createElement('style');
+                    el.id = '__blockads_user_css__';
+                    (document.head || document.documentElement).appendChild(el);
+                }
+                el.textContent = '$escaped { display: none !important; }';
+            } catch(e) {}
+        })();"""
+        view.evaluateJavascript(js, null)
+    }
+
     private fun readAsset(context: Context, filename: String): String {
         return runCatching {
             context.assets.open(filename).bufferedReader().use { it.readText() }

@@ -23,7 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Computer
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,12 +49,14 @@ fun BrowserBentoMenuSheet(
     isVisible: Boolean,
     blockedCount: Int,
     adBlockEnabled: Boolean,
+    popupBlockEnabled: Boolean = true,
     isDesktopMode: Boolean,
     ruleVersion: Long,
     ruleDomainsCount: Int,
     isCheckingRuleUpdates: Boolean,
     onDismiss: () -> Unit,
     onToggleAdBlock: () -> Unit,
+    onTogglePopupBlock: () -> Unit = {},
     onToggleDesktopMode: () -> Unit,
     onEnterPip: () -> Unit,
     onClearData: () -> Unit,
@@ -60,6 +65,8 @@ fun BrowserBentoMenuSheet(
     onHome: () -> Unit,
     onCloseBrowser: () -> Unit,
     onCheckRuleUpdates: () -> Unit,
+    onActivateElementPicker: () -> Unit = {},
+    onNavigateToElementRules: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (!isVisible) return
@@ -113,7 +120,7 @@ fun BrowserBentoMenuSheet(
                         .fillMaxHeight()
                 )
 
-                // Right Column: Toggle AdBlock + Toggle Desktop Mode
+                // Right Column: Toggle AdBlock + Toggle Popup Block
                 Column(
                     modifier = Modifier
                         .weight(1f)
@@ -131,18 +138,29 @@ fun BrowserBentoMenuSheet(
                     )
 
                     BentoToggleCard(
-                        title = "Bản Máy tính",
-                        subtitle = if (isDesktopMode) "Bật giao diện PC" else "Bản di động",
-                        icon = Icons.Default.Computer,
-                        checked = isDesktopMode,
-                        onCheckedChange = { onToggleDesktopMode() },
-                        activeColor = Color(0xFF6366F1),
+                        title = "Chặn Popup",
+                        subtitle = if (popupBlockEnabled) "Đang kích hoạt" else "Đã tạm dừng",
+                        icon = Icons.AutoMirrored.Filled.OpenInNew,
+                        checked = popupBlockEnabled,
+                        onCheckedChange = { onTogglePopupBlock() },
+                        activeColor = Color(0xFFEC4899),
                         modifier = Modifier.weight(1f)
                     )
                 }
             }
 
-            // Row 2: Picture-in-Picture Card
+            // Row 2: Desktop Mode Toggle Card
+            BentoToggleCard(
+                title = "Giao diện Máy tính",
+                subtitle = if (isDesktopMode) "Đang dùng User-Agent máy tính" else "Giao diện di động",
+                icon = Icons.Default.Computer,
+                checked = isDesktopMode,
+                onCheckedChange = { onToggleDesktopMode() },
+                activeColor = Color(0xFF6366F1),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            // Row 3: Picture-in-Picture Card
             BentoPipCard(onEnterPip = {
                 onDismiss()
                 onEnterPip()
@@ -168,7 +186,29 @@ fun BrowserBentoMenuSheet(
                 }
             )
 
-            // Row 4: Set as Default Browser CTA
+            // Row 4: Block Element CTA
+            BentoCtaButton(
+                title = "Chặn phần tử trang",
+                subtitle = "Chạm để ẩn quảng cáo hoặc thành phần khó chịu",
+                icon = Icons.Default.Block,
+                onClick = {
+                    onDismiss()
+                    onActivateElementPicker()
+                }
+            )
+
+            // Row 5: Manage Rules CTA
+            BentoCtaButton(
+                title = "Quản lý quy tắc chặn phần tử",
+                subtitle = "Xem và xóa các phần tử bạn đã chặn",
+                icon = Icons.Default.FilterList,
+                onClick = {
+                    onDismiss()
+                    onNavigateToElementRules()
+                }
+            )
+
+            // Row 6: Set as Default Browser CTA
             BentoCtaButton(
                 title = "Đặt làm trình duyệt mặc định",
                 subtitle = "Bảo vệ liên tục khi mở mọi liên kết",

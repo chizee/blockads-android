@@ -80,6 +80,7 @@ val appModule = module {
     single { get<AppDatabase>().customDnsRuleDao() }
     single { get<AppDatabase>().protectionProfileDao() }
     single { get<AppDatabase>().firewallRuleDao() }
+    single { get<AppDatabase>().elementRuleDao() }
 
     // Preferences
     single { AppPreferences(androidContext()) }
@@ -276,7 +277,13 @@ val appModule = module {
         app.pwhs.blockads.ui.browser.BrowserViewModel(
             application = androidApplication(),
             ruleRepository = get(),
-            suggestionRepository = get()
+            suggestionRepository = get(),
+            elementRuleDao = get()
+        )
+    }
+    viewModel {
+        app.pwhs.blockads.ui.browser.elementrules.ElementRulesViewModel(
+            elementRuleDao = get()
         )
     }
 }

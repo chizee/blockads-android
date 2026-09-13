@@ -1,32 +1,35 @@
 package app.pwhs.blockads.ui.browser
 
 import android.app.Application
+import android.net.Uri
 import android.webkit.CookieManager
 import android.webkit.WebStorage
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import app.pwhs.blockads.data.dao.ElementRuleDao
+import app.pwhs.blockads.data.entities.ElementRule
+import app.pwhs.blockads.ui.browser.data.SearchEngine
+import app.pwhs.blockads.ui.browser.data.SearchSuggestionRepository
 import app.pwhs.blockads.ui.browser.interceptor.BrowserAdBlocker
 import app.pwhs.blockads.ui.browser.rules.BrowserRuleRepository
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-
-import app.pwhs.blockads.ui.browser.data.SearchEngine
-import app.pwhs.blockads.ui.browser.data.SearchSuggestionRepository
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
 class BrowserViewModel(
     application: Application,
     private val ruleRepository: BrowserRuleRepository,
-    private val suggestionRepository: SearchSuggestionRepository
+    private val suggestionRepository: SearchSuggestionRepository,
+    private val elementRuleDao: ElementRuleDao,
 ) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(
@@ -102,6 +105,9 @@ class BrowserViewModel(
             is BrowserUiIntent.ToggleAdBlock -> {
                 _uiState.update { it.copy(adBlockEnabled = !it.adBlockEnabled) }
             }
+            is BrowserUiIntent.TogglePopupBlock -> {
+                _uiState.update { it.copy(popupBlockEnabled = !it.popupBlockEnabled) }
+            }
             is BrowserUiIntent.ToggleShortcuts -> {
                 _uiState.update { it.copy(showShortcuts = !it.showShortcuts) }
             }
@@ -131,6 +137,15 @@ class BrowserViewModel(
                         pageTitle = intent.title.ifEmpty { intent.url },
                         isLoading = false
                     )
+                }
+                viewModelScope.launch {
+                    val domain = runCatching { Uri.parse(intent.url).host?.removePrefix("www.") }.getOrNull()
+                    if (!domain.isNullOrBlank()) {
+                        val selectors = elementRuleDao.getSelectorsForDomain(domain)
+                        if (selectors.isNotEmpty()) {
+                            _uiEffect.send(BrowserUiEffect.InjectUserElementRules(selectors))
+                        }
+                    }
                 }
             }
             is BrowserUiIntent.AdBlocked -> {
@@ -173,6 +188,38 @@ class BrowserViewModel(
             }
             is BrowserUiIntent.UpdateBottomBarVisibility -> {
                 _uiState.update { it.copy(isBottomBarVisible = intent.visible) }
+            }
+            is BrowserUiIntent.ActivateElementPicker -> {
+                _uiState.update {
+                    it.copy(
+                        isElementPickerActive = true,
+                        isBentoMenuVisible = false
+                    )
+                }
+            }
+            is BrowserUiIntent.DeactivateElementPicker -> {
+                _uiState.update { it.copy(isElementPickerActive = false) }
+            }
+            is BrowserUiIntent.ElementRulePicked -> {
+                viewModelScope.launch {
+                    val cleanDomain = intent.domain.removePrefix("www.")
+                    elementRuleDao.insert(
+                        ElementRule(
+                            domain = cleanDomain,
+                            cssSelector = intent.cssSelector
+                        )
+                    )
+                    _uiState.update { it.copy(isElementPickerActive = false) }
+                    val selectors = elementRuleDao.getSelectorsForDomain(cleanDomain)
+                    _uiEffect.send(BrowserUiEffect.InjectUserElementRules(selectors))
+                    _uiEffect.send(BrowserUiEffect.ShowToast("Đã chặn phần tử trên $cleanDomain"))
+                }
+            }
+            is BrowserUiIntent.NavigateToElementRules -> {
+                viewModelScope.launch {
+                    _uiState.update { it.copy(isBentoMenuVisible = false) }
+                    _uiEffect.send(BrowserUiEffect.NavigateToElementRules)
+                }
             }
         }
     }

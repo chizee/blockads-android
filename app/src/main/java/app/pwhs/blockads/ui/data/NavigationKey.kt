@@ -73,3 +73,6 @@ data object HttpsFilteringKey : NavKey
 
 @Serializable
 data class BrowserKey(val initialUrl: String = "https://m.youtube.com") : NavKey
+
+@Serializable
+data object ElementRulesKey : NavKey

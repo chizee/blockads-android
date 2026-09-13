@@ -402,7 +402,13 @@ body.styletwo {
 [id^="__clb-spot"],
 [class*="__clb-spot"],
 .test_hihihi,
-iframe[id^="__clb-spot"] {
+iframe[id^="__clb-spot"],
+html > iframe,
+iframe[style*="2147483647"],
+div[style*="2147483647"],
+[id*="CleverCore"],
+[id*="adsboosters"],
+a[href*="apps2app.com"] {
     display: none !important;
     visibility: hidden !important;
     height: 0 !important;

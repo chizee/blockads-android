@@ -12,6 +12,7 @@ data class BrowserUiState(
     val canGoForward: Boolean = false,
     val isDesktopMode: Boolean = false,
     val adBlockEnabled: Boolean = true,
+    val popupBlockEnabled: Boolean = true,
     val blockedCount: Int = 0,
     val isIncognito: Boolean = true,
     val showShortcuts: Boolean = false,
@@ -23,7 +24,8 @@ data class BrowserUiState(
     val selectedSearchEngine: SearchEngine = SearchEngine.GOOGLE,
     val isSearchSheetVisible: Boolean = false,
     val isBottomBarVisible: Boolean = true,
-    val isBentoMenuVisible: Boolean = false
+    val isBentoMenuVisible: Boolean = false,
+    val isElementPickerActive: Boolean = false
 )
 
 sealed interface BrowserUiIntent {
@@ -33,6 +35,7 @@ sealed interface BrowserUiIntent {
     data object GoForward : BrowserUiIntent
     data object ToggleDesktopMode : BrowserUiIntent
     data object ToggleAdBlock : BrowserUiIntent
+    data object TogglePopupBlock : BrowserUiIntent
     data object ToggleShortcuts : BrowserUiIntent
     data object ClearData : BrowserUiIntent
     data class UpdateProgress(val progress: Int) : BrowserUiIntent
@@ -46,10 +49,16 @@ sealed interface BrowserUiIntent {
     data class ToggleBentoMenu(val visible: Boolean) : BrowserUiIntent
     data class SubmitSearch(val query: String) : BrowserUiIntent
     data class UpdateBottomBarVisibility(val visible: Boolean) : BrowserUiIntent
+    data object ActivateElementPicker : BrowserUiIntent
+    data object DeactivateElementPicker : BrowserUiIntent
+    data class ElementRulePicked(val cssSelector: String, val domain: String) : BrowserUiIntent
+    data object NavigateToElementRules : BrowserUiIntent
 }
 
 sealed interface BrowserUiEffect {
     data class ShowToast(val message: String) : BrowserUiEffect
     data class OpenExternal(val url: String) : BrowserUiEffect
     data class NavigateUrl(val url: String) : BrowserUiEffect
+    data class InjectUserElementRules(val selectors: List<String>) : BrowserUiEffect
+    data object NavigateToElementRules : BrowserUiEffect
 }

@@ -41,8 +41,10 @@ import app.pwhs.blockads.ui.data.AppManagementKey
 import app.pwhs.blockads.ui.data.AppearanceKey
 import app.pwhs.blockads.ui.browser.BrowserActivity
 import app.pwhs.blockads.ui.browser.BrowserScreen
+import app.pwhs.blockads.ui.browser.elementrules.ElementRulesScreen
 import app.pwhs.blockads.ui.data.BottomBarScreen
 import app.pwhs.blockads.ui.data.BrowserKey
+import app.pwhs.blockads.ui.data.ElementRulesKey
 import app.pwhs.blockads.ui.data.CustomRuleKey
 import app.pwhs.blockads.ui.data.DnsProviderKey
 import app.pwhs.blockads.ui.data.DomainRulesKey
@@ -366,6 +368,16 @@ fun HomeApp(
                     BrowserScreen(
                         initialUrl = key.initialUrl,
                         onCloseBrowser = {
+                            safePop(currentBackStack)
+                        },
+                        onNavigateToElementRules = {
+                            currentBackStack.add(ElementRulesKey)
+                        }
+                    )
+                }
+                entry<ElementRulesKey> {
+                    ElementRulesScreen(
+                        onNavigateBack = {
                             safePop(currentBackStack)
                         }
                     )
