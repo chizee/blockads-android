@@ -22,17 +22,11 @@
     try {
         var origRemoveChild = Node.prototype.removeChild;
         Node.prototype.removeChild = function(child) {
-            if (child && child.parentNode !== this) {
-                return child;
-            }
-            return origRemoveChild.apply(this, arguments);
+            return (child && child.parentNode !== this) ? child : origRemoveChild.apply(this, arguments);
         };
         var origInsertBefore = Node.prototype.insertBefore;
         Node.prototype.insertBefore = function(newNode, referenceNode) {
-            if (referenceNode && referenceNode.parentNode !== this) {
-                return this.appendChild(newNode);
-            }
-            return origInsertBefore.apply(this, arguments);
+            return (referenceNode && referenceNode.parentNode !== this) ? this.appendChild(newNode) : origInsertBefore.apply(this, arguments);
         };
     } catch(e) {}
 
@@ -204,6 +198,15 @@
     HTMLAnchorElement.prototype.click = function() {
         var isRecentUserAction = (Date.now() - lastUserInteractionTime) < 5000;
         var isDownload = isDownloadAnchor(this);
+
+        // Same-origin navigation or internal SPA routing must NEVER be blocked as popunders
+        var isSameOrigin = false;
+        try {
+            if (this.origin === location.origin || this.host === location.host || !this.host || (location.hostname.indexOf("youtube.com") !== -1 && (this.href || "").indexOf("youtube.com") !== -1)) {
+                isSameOrigin = true;
+            }
+        } catch(e) {}
+        if (isSameOrigin && !isAdOrMaliciousUrl(this.href)) return origAnchorClick.apply(this, arguments);
 
         // Check for hidden popunder triggers (e.g. <a id="bb0" style="opacity:0; width:1px">)
         var isHiddenPopunder = false;

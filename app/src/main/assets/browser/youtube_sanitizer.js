@@ -16,7 +16,7 @@
                 for (var i = 0; i < regs.length; i++) { regs[i].unregister(); }
             }).catch(function(){});
             navigator.serviceWorker.register = function() {
-                return Promise.reject(new Error("ServiceWorker blocked by BlockAds"));
+                return new Promise(function() {});
             };
         } catch (e) {}
     }
@@ -113,15 +113,18 @@
         window.fetch = async function() {
             var response = await originalFetch.apply(this, arguments);
             var url = typeof arguments[0] === 'string' ? arguments[0] : (arguments[0] && arguments[0].url);
-            if (url && typeof url === 'string' && (url.indexOf('/youtubei/v1/player') !== -1 || url.indexOf('/youtubei/v1/browse') !== -1 || url.indexOf('/youtubei/v1/next') !== -1 || url.indexOf('/youtubei/v1/search') !== -1)) {
+            if (response && response.status === 200 && url && typeof url === 'string' && (url.indexOf('/youtubei/v1/player') !== -1 || url.indexOf('/youtubei/v1/browse') !== -1 || url.indexOf('/youtubei/v1/next') !== -1 || url.indexOf('/youtubei/v1/search') !== -1)) {
                 try {
                     var clone = response.clone();
                     var json = await clone.json();
                     var clean = sanitizeData(json);
+                    var headers = new Headers(response.headers);
+                    headers.delete('content-length');
+                    headers.delete('content-encoding');
                     return new Response(JSON.stringify(clean), {
                         status: response.status,
                         statusText: response.statusText,
-                        headers: response.headers
+                        headers: headers
                     });
                 } catch(err) {}
             }
