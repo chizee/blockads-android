@@ -126,8 +126,15 @@ class FilterDownloadManager(
         val cssBuilder = StringBuilder()
         try {
             file.forEachLine { line ->
-                val selector = line.trim()
-                if (selector.isNotEmpty()) {
+                var selector = line.trim()
+                if (selector.isEmpty() || selector.startsWith("!") || (selector.startsWith("#") && !selector.startsWith("##"))) {
+                    return@forEachLine
+                }
+                if (selector.startsWith("##")) {
+                    selector = selector.removePrefix("##").trim()
+                }
+                // Skip unhandled domain-specific rules (e.g. domain.com##...) or complex rules
+                if (selector.isNotEmpty() && !selector.contains("##")) {
                     cssBuilder.append(selector).append(" { display: none !important; }\n")
                 }
             }
