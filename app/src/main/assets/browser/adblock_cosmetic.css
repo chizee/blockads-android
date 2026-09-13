@@ -1,13 +1,6 @@
 /* BlockAds ExtendedCSS Cosmetic Filter */
 
-/* Conceal ad video immediately during in-stream ad playback so frames never flash */
-.ad-showing video,
-.ad-interrupting video,
-.html5-video-player.ad-showing video,
-.html5-video-player.ad-interrupting video {
-    visibility: hidden !important;
-    opacity: 0 !important;
-}
+
 
 /* ========================================================
    1. YouTube Mobile Web Ad Elements

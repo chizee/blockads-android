@@ -108,16 +108,7 @@ func NewMitmTcpHandler(
 			return
 		}
 
-		// Gate 2 — browser allowlist (UID). When Kotlin has configured
-		// an allowlist, non-allowed UIDs get passthrough. If UID is
-		// unknown (API < 29, resolver failure), err on the safe side:
-		// passthrough rather than MITM an unknown app.
-		if filter.HasAllowedUIDs() && (uid == UIDUnknown || !filter.IsUIDAllowed(uid)) {
-			relayDirectFromFlow(conn, flow, blocker, protectFn)
-			return
-		}
-
-		// Gate 3 — peek first bytes to classify and extract SNI / Host.
+		// Gate 2 — peek first bytes to classify and extract SNI / Host.
 		peeked, peekedReader, err := peekFlow(conn, peekSize, peekTimeout)
 		if err != nil || len(peeked) == 0 {
 			return
@@ -142,24 +133,34 @@ func NewMitmTcpHandler(
 		}
 		hostname = strings.ToLower(strings.TrimSpace(hostname))
 
-		// Gate 4 — ad-block blocker.
-		if blocker != nil && blocker.IsDomainBlocked(hostname) {
-			return
-		}
-
-		// Gate 5 — sensitive / cert-pinned domain.
-		if !filter.IsInterceptionAllowed(hostname) {
-			relayDirectPeeked(conn, peekedReader, flow, hostname, blocker, protectFn)
-			return
-		}
-
-		// Gate 6 — local asset server.
+		// Gate 3 — local asset server (local.pwhs.app).
+		// Always intercepted and served locally from memory regardless of UID allowlist.
 		if IsLocalAssetHost(hostname) {
 			if classification == classTLS {
 				serveLocalAssetTLS(conn, peekedReader, certMgr, hostname)
 			} else {
 				serveLocalAssetPlaintext(conn, peekedReader)
 			}
+			return
+		}
+
+		// Gate 4 — browser allowlist (UID). When Kotlin has configured
+		// an allowlist, non-allowed UIDs get passthrough. If UID is
+		// unknown (API < 29, resolver failure), err on the safe side:
+		// passthrough rather than MITM an unknown app.
+		if filter.HasAllowedUIDs() && (uid == UIDUnknown || !filter.IsUIDAllowed(uid)) {
+			relayDirectPeeked(conn, peekedReader, flow, hostname, blocker, protectFn)
+			return
+		}
+
+		// Gate 5 — ad-block blocker.
+		if blocker != nil && blocker.IsDomainBlocked(hostname) {
+			return
+		}
+
+		// Gate 6 — sensitive / cert-pinned domain.
+		if !filter.IsInterceptionAllowed(hostname) {
+			relayDirectPeeked(conn, peekedReader, flow, hostname, blocker, protectFn)
 			return
 		}
 
