@@ -39,7 +39,7 @@ class FilterListRepository(
         const val BLOCK_REASON_UPSTREAM_DNS = "upstream_dns"
 
         private const val FILTER_LIST_JSON_URL =
-            "https://raw.githubusercontent.com/pass-with-high-score/blockads-default-filter/refs/heads/main/output/filter_lists.json"
+            "https://complier.pwhs.app/api/filters/default"
     }
 
     // Paths to pre-compiled binary files for Go Native Engine (CSV strings)
