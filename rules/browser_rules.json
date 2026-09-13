@@ -1,6 +1,6 @@
 {
-  "version": 10,
-  "updatedAt": 1726200000000,
+  "version": 11,
+  "updatedAt": 1726207800000,
   "adDomains": [
     "doubleclick.net",
     "googleadservices.com",
@@ -293,6 +293,6 @@
     "/sfp.js",
     "/on.js"
   ],
-  "cosmeticCss": null,
-  "scriptletsJs": null
+  "cosmeticCss": "https://raw.githubusercontent.com/pass-with-high-score/blockads-android/main/app/src/main/assets/browser/adblock_cosmetic.css",
+  "scriptletsJs": "https://raw.githubusercontent.com/pass-with-high-score/blockads-android/main/app/src/main/assets/browser/adguard_scriptlets.js"
 }
