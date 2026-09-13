@@ -181,9 +181,11 @@ func wrapResponseForInjection(resp *http.Response) {
 			bodyReader = flate.NewReader(bytes.NewReader(raw))
 		}
 	default:
+		logf("[MITM Wrap] Unsupported Content-Encoding %q; skipping HTML injection", encoding)
 		return
 	}
 
+	logf("[MITM Wrap] Wrapped HTML response for injection (encoding=%q)", encoding)
 	resp.Body = io.NopCloser(NewInjectingReader(bodyReader))
 	resp.ContentLength = -1
 	resp.Header.Del("Content-Length")

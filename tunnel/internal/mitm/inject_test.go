@@ -66,3 +66,37 @@ func TestInjectGzipHTML(t *testing.T) {
 		t.Errorf("Injected CSS not found in response:\n%s", outStr)
 	}
 }
+
+func TestInjectLiveLeeAPK(t *testing.T) {
+	req, _ := http.NewRequest("GET", "https://leeapk.com/proton-mail-mod-apk/", nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36")
+	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+	tr := &http.Transport{DisableCompression: true}
+	resp, err := tr.RoundTrip(req)
+	if err != nil {
+		t.Skipf("Cannot reach leeapk.com: %v", err)
+	}
+	defer resp.Body.Close()
+
+	t.Logf("Live Status: %s, Content-Type: %s, Content-Encoding: %s",
+		resp.Status, resp.Header.Get("Content-Type"), resp.Header.Get("Content-Encoding"))
+
+	if !ShouldInjectHTML(resp.Header.Get("Content-Type")) {
+		t.Fatalf("ShouldInjectHTML returned false for %s", resp.Header.Get("Content-Type"))
+	}
+
+	wrapResponseForInjection(resp)
+
+	var out bytes.Buffer
+	if err := resp.Write(&out); err != nil {
+		t.Fatalf("resp.Write failed: %v", err)
+	}
+
+	outStr := out.String()
+	if !strings.Contains(outStr, "local.pwhs.app/cosmetic.css") {
+		t.Errorf("Injected CSS not found in live response! Head snippet:\n%s", outStr[:min(1000, len(outStr))])
+	} else {
+		t.Logf("Successfully injected into live LeeAPK response!")
+	}
+}
+

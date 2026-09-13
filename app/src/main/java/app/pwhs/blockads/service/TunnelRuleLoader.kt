@@ -17,10 +17,17 @@ object TunnelRuleLoader {
         return try {
             val storage = BrowserRuleStorage(context)
             val pkg = storage.getActivePackage()
-            pkg.cosmeticCss?.takeIf { it.isNotBlank() } ?: ""
+            val raw = pkg.cosmeticCss?.trim()
+            if (raw.isNullOrBlank() || raw.startsWith("http://") || raw.startsWith("https://")) {
+                context.assets.open("browser/adblock_cosmetic.css").bufferedReader().use { it.readText() }
+            } else {
+                raw
+            }
         } catch (e: Exception) {
-            Timber.w(e, "Failed to read browser cosmetic CSS from storage")
-            ""
+            Timber.w(e, "Failed to read browser cosmetic CSS from storage, trying assets directly")
+            runCatching {
+                context.assets.open("browser/adblock_cosmetic.css").bufferedReader().use { it.readText() }
+            }.getOrDefault("")
         }
     }
 
@@ -31,10 +38,13 @@ object TunnelRuleLoader {
         return try {
             val storage = BrowserRuleStorage(context)
             val pkg = storage.getActivePackage()
-            pkg.adPathPatterns.joinToString("\n")
+            val patterns = pkg.adPathPatterns.ifEmpty {
+                app.pwhs.blockads.ui.browser.rules.BrowserRuleDefaults.AD_PATH_PATTERNS
+            }
+            patterns.joinToString("\n")
         } catch (e: Exception) {
             Timber.w(e, "Failed to load ad path patterns from storage")
-            ""
+            app.pwhs.blockads.ui.browser.rules.BrowserRuleDefaults.AD_PATH_PATTERNS.joinToString("\n")
         }
     }
 
@@ -45,10 +55,17 @@ object TunnelRuleLoader {
         return try {
             val storage = BrowserRuleStorage(context)
             val pkg = storage.getActivePackage()
-            pkg.scriptletsJs?.takeIf { it.isNotBlank() } ?: ""
+            val raw = pkg.scriptletsJs?.trim()
+            if (raw.isNullOrBlank() || raw.startsWith("http://") || raw.startsWith("https://")) {
+                context.assets.open("browser/adguard_scriptlets.js").bufferedReader().use { it.readText() }
+            } else {
+                raw
+            }
         } catch (e: Exception) {
-            Timber.w(e, "Failed to load scriptlets JS from storage")
-            ""
+            Timber.w(e, "Failed to load scriptlets JS from storage, trying assets directly")
+            runCatching {
+                context.assets.open("browser/adguard_scriptlets.js").bufferedReader().use { it.readText() }
+            }.getOrDefault("")
         }
     }
 }
