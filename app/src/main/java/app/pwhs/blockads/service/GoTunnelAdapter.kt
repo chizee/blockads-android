@@ -457,6 +457,17 @@ class GoTunnelAdapter(
             Timber.e(e, "Failed to load scriptlet rules for engine")
             engine.setScriptletRules("")
         }
+
+        try {
+            val patterns = filterRepo.getAdPathPatterns()
+            engine.setAdPathPatterns(patterns)
+            if (patterns.isNotEmpty()) {
+                Timber.d("Ad path patterns loaded: ${patterns.lines().size} patterns")
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to load ad path patterns for engine")
+            engine.setAdPathPatterns("")
+        }
     }
 
     /**

@@ -119,7 +119,7 @@ func mitmTLSFlow(
 	}
 	defer clientTLS.Close()
 
-	relayHTTPFlow(clientTLS, serverConn, hostname, blocker)
+	relayHTTPFlow(clientTLS, serverConn, hostname, filter, blocker)
 }
 
 // mitmHTTPFlow handles plaintext HTTP (port 80) flows. Same gates
@@ -127,6 +127,7 @@ func mitmTLSFlow(
 func mitmHTTPFlow(
 	clientConn net.Conn,
 	clientReader io.Reader,
+	filter *MitmFilter,
 	blocker adBlockChecker,
 	hostname string,
 	flow flowID,
@@ -138,13 +139,13 @@ func mitmHTTPFlow(
 	}
 	defer serverConn.Close()
 
-	relayHTTPFlow(&peekReplayConn{Conn: clientConn, r: clientReader}, serverConn, hostname, blocker)
+	relayHTTPFlow(&peekReplayConn{Conn: clientConn, r: clientReader}, serverConn, hostname, filter, blocker)
 }
 
 // relayHTTPFlow reads HTTP requests from the client connection, forwards to
 // the server, decompresses and injects into HTML responses, and supports
 // local.pwhs.app sub-requests inside the same session.
-func relayHTTPFlow(clientConn, serverConn net.Conn, hostname string, blocker adBlockChecker) {
+func relayHTTPFlow(clientConn, serverConn net.Conn, hostname string, filter *MitmFilter, blocker adBlockChecker) {
 	cr := bufio.NewReader(clientConn)
 	sr := bufio.NewReader(serverConn)
 
@@ -178,6 +179,20 @@ func relayHTTPFlow(clientConn, serverConn net.Conn, hostname string, blocker adB
 			blockedResp.Header.Set("Connection", "keep-alive")
 			blockedResp.Header.Set("Content-Length", "19")
 			blockedResp.Write(clientConn)
+			continue
+		}
+
+		// Block ad path patterns (e.g. /pagead, /ads.js). Return 204 instead
+		// of 403 so browsers don't show broken-image or error indicators.
+		if filter != nil && filter.IsAdPathBlocked(req.URL.Path) {
+			noContentResp := &http.Response{
+				StatusCode: 204,
+				ProtoMajor: 1, ProtoMinor: 1,
+				Header:    make(http.Header),
+				Body:       io.NopCloser(strings.NewReader("")),
+			}
+			noContentResp.Header.Set("Connection", "keep-alive")
+			noContentResp.Write(clientConn)
 			continue
 		}
 

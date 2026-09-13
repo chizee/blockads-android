@@ -312,6 +312,38 @@ func (e *Engine) SetCosmeticCSS(css string) {
 	SetCosmeticCSS(css)
 }
 
+// SetAdPathPatterns loads URL path patterns that will be blocked (returning
+// 204 No Content) when intercepted by the HTTPS MITM proxy. Patterns are
+// matched as case-insensitive substrings of the request path so simple
+// prefixes like "/pagead" or filename patterns like "/ads.js" both work.
+//
+// patternsCsv: newline-separated list, e.g. "/pagead\n/ads.js\n/doubleclick/"
+// Blank lines and lines starting with # are ignored. Pass an empty string
+// to clear all patterns.
+//
+// Kotlin usage:
+//
+//	val patterns = browserRuleRepo.getAdPathPatterns().joinToString("\n")
+//	engine.setAdPathPatterns(patterns)
+func (e *Engine) SetAdPathPatterns(patternsCsv string) {
+	e.mu.Lock()
+	filter := e.stackMitmFilter
+	e.mu.Unlock()
+	if filter == nil {
+		logf("SetAdPathPatterns: stack MITM not active")
+		return
+	}
+	var patterns []string
+	for _, line := range strings.Split(patternsCsv, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		patterns = append(patterns, line)
+	}
+	filter.SetAdPathPatterns(patterns)
+}
+
 // ── AdBlockChecker implementation ────────────────────────────────────────────
 // IsDomainBlocked satisfies the AdBlockChecker interface used by the MITM
 // proxy.  It replicates the exact same blocking pipeline used for DNS queries:

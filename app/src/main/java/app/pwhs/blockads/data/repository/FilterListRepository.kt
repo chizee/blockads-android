@@ -84,6 +84,23 @@ class FilterListRepository(
         return if (file.exists() && file.length() > 0) file.absolutePath else null
     }
 
+    /** Returns adPathPatterns from browser_rules.json as newline-separated string. */
+    fun getAdPathPatterns(): String {
+        return try {
+            val json = context.assets.open("browser_rules.json").bufferedReader().use { it.readText() }
+            // Simple extraction: find "adPathPatterns":[...] and parse the strings
+            val match = """"adPathPatterns"\s*:\s*\[(.*?)]""".toRegex(RegexOption.DOT_MATCHES_ALL)
+                .find(json)?.groupValues?.get(1) ?: return ""
+            """"(.*?)"""".toRegex().findAll(match)
+                .map { it.groupValues[1] }
+                .filter { it.isNotBlank() }
+                .joinToString("\n")
+        } catch (e: Exception) {
+            Timber.w(e, "Failed to read ad path patterns from browser_rules.json")
+            ""
+        }
+    }
+
     private inline fun checkDomainAndParents(
         domain: String,
         checker: (String) -> Boolean

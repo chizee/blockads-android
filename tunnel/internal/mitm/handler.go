@@ -167,7 +167,7 @@ func NewMitmTcpHandler(
 		if classification == classTLS {
 			mitmTLSFlow(conn, peekedReader, certMgr, filter, blocker, hostname, flow, protectFn)
 		} else {
-			mitmHTTPFlow(conn, peekedReader, blocker, hostname, flow, protectFn)
+			mitmHTTPFlow(conn, peekedReader, filter, blocker, hostname, flow, protectFn)
 		}
 	}
 }
