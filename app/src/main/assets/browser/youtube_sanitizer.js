@@ -9,6 +9,18 @@
     if (window.__blockads_yt_sanitizer_injected) return;
     window.__blockads_yt_sanitizer_injected = true;
 
+    // Neutralize YouTube ServiceWorker so fetch/XHR hooks intercept player responses
+    if (typeof navigator !== "undefined" && "serviceWorker" in navigator && location.hostname.indexOf("youtube.com") !== -1) {
+        try {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+                for (var i = 0; i < regs.length; i++) { regs[i].unregister(); }
+            }).catch(function(){});
+            navigator.serviceWorker.register = function() {
+                return Promise.reject(new Error("ServiceWorker blocked by BlockAds"));
+            };
+        } catch (e) {}
+    }
+
     function sanitizeData(data) {
         if (!data || typeof data !== 'object') return data;
         try {

@@ -88,7 +88,6 @@ var minimalPassthroughSuffixes = []string{
 	".googleapis.com",
 	".gstatic.com",
 	".android.com",
-	".youtube.com",
 	".googlevideo.com",
 	".googleusercontent.com",
 	// Apple

@@ -52,7 +52,11 @@ object TunnelRuleLoader {
      * Loads scriptlets JS from the active browser rule package (adguard_scriptlets.js / remote updates).
      */
     fun loadScriptletsJs(context: Context): String {
-        return try {
+        val ytSanitizer = runCatching {
+            context.assets.open("browser/youtube_sanitizer.js").bufferedReader().use { it.readText() }
+        }.getOrDefault("")
+
+        val baseScriptlets = try {
             val storage = BrowserRuleStorage(context)
             val pkg = storage.getActivePackage()
             val raw = pkg.scriptletsJs?.trim()
@@ -66,6 +70,12 @@ object TunnelRuleLoader {
             runCatching {
                 context.assets.open("browser/adguard_scriptlets.js").bufferedReader().use { it.readText() }
             }.getOrDefault("")
+        }
+
+        return if (ytSanitizer.isNotBlank()) {
+            "$baseScriptlets\n\n$ytSanitizer"
+        } else {
+            baseScriptlets
         }
     }
 }
