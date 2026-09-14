@@ -251,17 +251,19 @@ class TvVpnService : VpnService() {
 
             vpnInterface = builder.establish()
             if (vpnInterface != null) {
-                try {
-                    val fd = vpnInterface!!.fileDescriptor
-                    val flags = android.system.Os.fcntlInt(fd, android.system.OsConstants.F_GETFL, 0)
-                    android.system.Os.fcntlInt(
-                        fd,
-                        android.system.OsConstants.F_SETFL,
-                        flags or android.system.OsConstants.O_NONBLOCK
-                    )
-                    Timber.d("TV TUN file descriptor set to O_NONBLOCK successfully")
-                } catch (e: Exception) {
-                    Timber.w(e, "Failed to enforce O_NONBLOCK on TV TUN fd")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    try {
+                        val fd = vpnInterface!!.fileDescriptor
+                        val flags = android.system.Os.fcntlInt(fd, android.system.OsConstants.F_GETFL, 0)
+                        android.system.Os.fcntlInt(
+                            fd,
+                            android.system.OsConstants.F_SETFL,
+                            flags or android.system.OsConstants.O_NONBLOCK
+                        )
+                        Timber.d("TV TUN file descriptor set to O_NONBLOCK successfully")
+                    } catch (e: Exception) {
+                        Timber.w(e, "Failed to enforce O_NONBLOCK on TV TUN fd")
+                    }
                 }
             }
             Timber.d("VPN interface established: ${vpnInterface != null}")

@@ -86,6 +86,8 @@ fun CertInstallationWizardScreen(
         }
     }
 
+    val filenameCopiedMsg = stringResource(R.string.https_wizard_filename_copied)
+
     LaunchedEffect(Unit) {
         viewModel.uiEffect.collect { effect ->
             when (effect) {
@@ -106,7 +108,7 @@ fun CertInstallationWizardScreen(
                     val clipboard = context.getSystemService(android.content.ClipboardManager::class.java)
                     val clip = android.content.ClipData.newPlainText("cert_filename", effect.text)
                     clipboard?.setPrimaryClip(clip)
-                    snackbarHostState.showSnackbar(context.getString(R.string.https_wizard_filename_copied))
+                    snackbarHostState.showSnackbar(filenameCopiedMsg)
                 }
             }
         }

@@ -137,11 +137,13 @@ class VpnTunnelBuilder(
 
             val pfd = builder.establish()
             if (pfd != null) {
-                try {
-                    val flags = android.system.Os.fcntlInt(pfd.fileDescriptor, android.system.OsConstants.F_GETFL, 0)
-                    android.system.Os.fcntlInt(pfd.fileDescriptor, android.system.OsConstants.F_SETFL, flags or android.system.OsConstants.O_NONBLOCK)
-                } catch (e: Exception) {
-                    Timber.w(e, "Failed to set TUN O_NONBLOCK via fcntl")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    try {
+                        val flags = android.system.Os.fcntlInt(pfd.fileDescriptor, android.system.OsConstants.F_GETFL, 0)
+                        android.system.Os.fcntlInt(pfd.fileDescriptor, android.system.OsConstants.F_SETFL, flags or android.system.OsConstants.O_NONBLOCK)
+                    } catch (e: Exception) {
+                        Timber.w(e, "Failed to set TUN O_NONBLOCK via fcntl")
+                    }
                 }
                 TunnelResult.Success(pfd, resolvedWgConfigJson)
             } else {

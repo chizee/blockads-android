@@ -21,9 +21,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +44,11 @@ fun MilestoneBottomSheet(
     modifier: Modifier = Modifier
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val formattedCount = NumberFormat.getNumberInstance(Locale.getDefault()).format(milestone)
+    val configuration = LocalConfiguration.current
+    val currentLocale = configuration.locales[0]
+    val formattedCount = remember(milestone, currentLocale) {
+        NumberFormat.getNumberInstance(currentLocale).format(milestone)
+    }
 
     // Rough averages for ad payloads and rendering delay
     val estimatedDataMb = (milestone * 50L) / 1024L // ~50 KB per blocked ad request

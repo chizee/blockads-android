@@ -163,7 +163,7 @@
     <string name="https_wizard_benefit_2">Hide blank placeholders, banners, and intrusive popups</string>
     <string name="https_wizard_benefit_3">Execute Scriptlets to defeat anti-adblock mechanisms</string>
     <string name="https_wizard_privacy_title">Strict Privacy Safeguards</string>
-    <string name="https_wizard_privacy_on_device_title">100% On-Device</string>
+    <string name="https_wizard_privacy_on_device_title" formatted="false">100% On-Device</string>
     <string name="https_wizard_privacy_on_device_desc">Keys and certificate are generated locally on your phone and never transmitted anywhere.</string>
     <string name="https_wizard_privacy_bypass_title">Bypasses Banking &amp; Financial Apps</string>
     <string name="https_wizard_privacy_bypass_desc">Sensitive domains (banks, identification, Google) are directly forwarded and never decrypted.</string>

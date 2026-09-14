@@ -161,7 +161,7 @@
     <string name="https_wizard_benefit_2">Ẩn hoàn toàn khung trống, banner và pop-up phiền toái</string>
     <string name="https_wizard_benefit_3">Thực thi Scriptlets chặn các chiêu trò chống chặn quảng cáo</string>
     <string name="https_wizard_privacy_title">Cam kết bảo mật &amp; Quyền riêng tư</string>
-    <string name="https_wizard_privacy_on_device_title">100% Cục bộ trên máy</string>
+    <string name="https_wizard_privacy_on_device_title" formatted="false">100% Cục bộ trên máy</string>
     <string name="https_wizard_privacy_on_device_desc">Khóa bảo mật và chứng chỉ được tạo ngẫu nhiên trên thiết bị của bạn, không bao giờ gửi ra ngoài mạng.</string>
     <string name="https_wizard_privacy_bypass_title">Bỏ qua ứng dụng Ngân hàng &amp; Tài chính</string>
     <string name="https_wizard_privacy_bypass_desc">Các tên miền nhạy cảm (ngân hàng, thanh toán, Google) luôn được chuyển tiếp trực tiếp và không bao giờ bị giải mã.</string>
