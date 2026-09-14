@@ -40,7 +40,7 @@ Each screen must strictly follow the **MVI pattern** separated across dedicated 
 - Verify code integrity with `./gradlew assembleDebug` or relevant unit tests before finalizing.
 
 ## Detailed Rule References
-- Architecture & Stack: `.agent/rules/architecture.md`
-- Kotlin & Compose: `.agent/rules/kotlin-compose.md`
-- Go Tunnel & Gomobile: `.agent/rules/go-tunnel.md`
-- Git & Workflow: `.agent/rules/git-workflow.md`
+- Architecture & Stack: `.agents/rules/architecture.md`
+- Kotlin & Compose: `.agents/rules/kotlin-compose.md`
+- Go Tunnel & Gomobile: `.agents/rules/go-tunnel.md`
+- Git & Workflow: `.agents/rules/git-workflow.md`
