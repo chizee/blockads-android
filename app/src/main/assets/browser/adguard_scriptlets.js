@@ -95,14 +95,14 @@
         'shopee://', 'lazada://', 'tiki://', 'snssdk://', 'snssdk1128://', 'tiktok://', 'musically://',
         'affiliate', 'popads', 'popcash', 'propeller', 'adsterra', 'clickadu', 'exoclick', 'exosrv',
         'doubleclick', 'adnxs', 'mgid', 'taboola', 'adxcontent', 'adxmedia', 'vlit', 'catfish',
-        'popunder', 'clumsy-whereas', 'bytedapm.com', 'a-ads.com', 'invl.me', 'involve.asia',
+        'popunder', 'clumsy-whereas', 'bytedapm.com', 'a-ads.com', 'invl.me', 'involve.asia', 'bc.game',
         'lu88', 'hbet', 'vu88', 'man88', 'k88.', 'tx88', 'du88', 'x1bet', 'bet88', 'kubet', 'shbet',
         '789bet', 'okvip', 'jun88', 'hi88', 'f8bet', 'mb66', '123b', 'fun88', 'bk8', 'rikvip', 'cm88',
-        'bc.game', 'gamebaidoithuong', 'taixiu', 'baccarat', 'offerflowtogo',
+        'gamebaidoithuong', 'taixiu', 'baccarat', 'offerflowtogo', 'atoptions', 'fantastindents', 'excidekombu',
         'campfirecroutondecorator', 'beholdjarhypnotize', 'gigglegrowlworrisome', 'portalfluently',
         'thedirecthor', 'vivodemisrentas', 'bionomysolera', 'bundlemoviepumice', 'fagoklaer', 'gahakoleir',
-        'atoptions', 'fantastindents', 'excidekombu', 'cleverwebserver', 'adsboosters',
-        '92mim', 'tzegilo', 'vr-gc', 'dd133', 'becorsolaom', 'apps2app', 'vignette'
+        'cleverwebserver', 'adsboosters', '92mim', 'tzegilo', 'vr-gc', 'dd133', 'becorsolaom', 'apps2app', 'vignette',
+        'roastoup', 'sandburstf2b9n', 'tokyo77', 'tokyo88', 'masuksini', 'playstake', 'akseslink', 'bumibola', 'tinig22', 'dwagg'
     ];
 
     function isAdOrMaliciousUrl(url) {
@@ -260,15 +260,12 @@
                 '.js-ad-slot, .ad-adsense, [data-dt-ga-name*="resp_download_"], .share-open, .download-vip-subscribe-wrap',
                 '#acrp-sticky-wrap, #acrp-sticky-inner, .acrp-sticky-close, .acrp-ad-box-1, [class*="acrp-ad"]',
                 '#random-ad, [id*="random-ad"], iframe[src*="a-ads.com"], [id^="__clb-spot"], .banners-all, .my_banner',
-                'aside.ezoic-ad-slot, section[aria-label="Sponsored offers"], div[role="dialog"][aria-label="Sponsored offers"]'
+                'aside.ezoic-ad-slot, section[aria-label="Sponsored offers"], div[role="dialog"][aria-label="Sponsored offers"]',
+                '.clever-core-ads, .czlll-rlselse, .czlll-rlselse1, [class*="czlll-"], [class*="da-tep"], .play-site-pop, .bt-pop-wrap, van-action-sheet.pop-2, div.van-popup.pop-2'
             ];
             var adEls = document.querySelectorAll(adSelectors.join(','));
             for (var i = 0; i < adEls.length; i++) {
-                var el = adEls[i];
-                el.style.setProperty('display', 'none', 'important');
-                el.style.setProperty('pointer-events', 'none', 'important');
-                el.style.setProperty('height', '0px', 'important');
-                el.style.setProperty('min-height', '0px', 'important');
+                adEls[i].style.cssText += ';display:none!important;pointer-events:none!important;height:0!important;min-height:0!important;';
             }
 
             // B. Hide any anchors pointing to gambling or ad networks (preserve download links)
@@ -321,96 +318,43 @@
                 }
             }
 
-            // D. Remove Anti-Adblock popup modals only (never touch navigation menus/drawers)
+            // D. Remove Anti-Adblock popup modals
             var dialogs = document.querySelectorAll('[role="dialog"], [role="alertdialog"]');
             for (var m = 0; m < dialogs.length; m++) {
-                var dlg = dialogs[m];
-                var txt = (dlg.innerText || '');
+                var txt = (dialogs[m].innerText || '');
                 if (txt.indexOf('Ad Blocker') > -1 || txt.indexOf('ad blocker') > -1 || txt.indexOf('Adblock') > -1) {
-                    var parentModal = dlg.closest('[tabindex="-1"]') || dlg.parentElement;
-                    if (parentModal) {
-                        parentModal.style.setProperty('display', 'none', 'important');
-                        parentModal.style.setProperty('pointer-events', 'none', 'important');
-                    }
-                    var modalBackdrops = document.querySelectorAll('.z-50.backdrop-blur-md.bg-black\\/80, .z-50.backdrop-blur-md.bg-black\\/70');
-                    for (var b = 0; b < modalBackdrops.length; b++) {
-                        modalBackdrops[b].style.setProperty('display', 'none', 'important');
-                    }
-                    document.documentElement.style.overflow = 'auto';
-                    document.body.style.overflow = 'auto';
-                    var hiddenNodes = document.querySelectorAll('[aria-hidden="true"]');
-                    for (var h = 0; h < hiddenNodes.length; h++) {
-                        if (hiddenNodes[h].getAttribute('data-overlay-container') === 'true') {
-                            hiddenNodes[h].removeAttribute('aria-hidden');
-                        }
-                    }
+                    var pm = dialogs[m].closest('[tabindex="-1"]') || dialogs[m].parentElement;
+                    if (pm) pm.style.cssText += ';display:none!important;pointer-events:none!important;';
+                    document.querySelectorAll('.z-50.backdrop-blur-md').forEach(function(b) { b.style.display = 'none'; });
+                    if (document.documentElement) document.documentElement.style.overflow = 'auto';
+                    if (document.body) document.body.style.overflow = 'auto';
+                    document.querySelectorAll('[data-overlay-container="true"]').forEach(function(h) { h.removeAttribute('aria-hidden'); });
                 }
             }
+            document.querySelectorAll("[data-n^='s']").forEach(function(aH) { aH.remove(); });
 
-            // Also remove shadow-root anti-adblock hosts & restore overflow (e.g. ACRP guard)
-            var acrpHolster = document.querySelectorAll("[data-n^='s']");
-            for (var aH = 0; aH < acrpHolster.length; aH++) {
-                acrpHolster[aH].remove();
-                if (document.documentElement) document.documentElement.style.overflow = 'auto';
-                if (document.body) document.body.style.overflow = 'auto';
-            }
-
-            // E. Remove forced page blur & locked scroll (xHamster, age verification gates)
-            if (document.documentElement && document.documentElement.classList.contains('xh-thumb-disabled')) {
-                document.documentElement.classList.remove('xh-thumb-disabled');
-            }
+            // E. Remove forced page blur & locked scroll (xHamster, gates)
+            if (document.documentElement && document.documentElement.classList.contains('xh-thumb-disabled')) document.documentElement.classList.remove('xh-thumb-disabled');
             if (document.body && document.body.classList.contains('xh-scroll-disabled')) {
                 document.body.classList.remove('xh-scroll-disabled');
                 document.body.style.position = 'static';
                 document.body.style.overflow = 'auto';
             }
-            var blurredWraps = document.querySelectorAll('.main-wrap[style*="blur"]');
-            for (var bw = 0; bw < blurredWraps.length; bw++) {
-                blurredWraps[bw].style.filter = 'none';
-            }
-            var cookieModals = document.querySelectorAll('[data-role="cookies-modal"], [data-role="dialog-manager"]');
-            for (var cm = 0; cm < cookieModals.length; cm++) {
-                cookieModals[cm].style.setProperty('display', 'none', 'important');
-            }
-            var adWidgets = document.querySelectorAll('.thumb-list-mobile-item--widget, [class*="thumb-list-mobile-item--widget"], [data-role="promo-messages-wrapper"]');
-            for (var aw = 0; aw < adWidgets.length; aw++) {
-                adWidgets[aw].style.setProperty('display', 'none', 'important');
-            }
+            document.querySelectorAll('.main-wrap[style*="blur"]').forEach(function(bw) { bw.style.filter = 'none'; });
+            document.querySelectorAll('[data-role="cookies-modal"], [data-role="dialog-manager"], .thumb-list-mobile-item--widget, [data-role="promo-messages-wrapper"]').forEach(function(el) { el.style.display = 'none'; });
 
-            // F. Hide streaming gambling popups & auto-skip video ads
-            var motphimAds = document.querySelectorAll('div.fixed.inset-0.z-\\[9999\\], div[class*="fixed"][class*="inset-0"]:has(button), div[class*="fixed"]:has(img[src*="offa"]), div:has(> a.no-ads-under)');
-            for (var ma = 0; ma < motphimAds.length; ma++) {
-                motphimAds[ma].style.setProperty('display', 'none', 'important');
-                motphimAds[ma].style.setProperty('pointer-events', 'none', 'important');
-            }
+            // F. Streaming ads & player skip
+            document.querySelectorAll('div.fixed.inset-0.z-\\[9999\\], div[class*="fixed"]:has(img[src*="offa"]), div:has(> a.no-ads-under)').forEach(function(ma) { ma.style.cssText += ';display:none!important;pointer-events:none!important;'; });
             var skipBtn = document.querySelector('.jw-skip, .videoAdUiSkipButton, .ytp-ad-skip-button, .ytp-skip-ad-button');
-            if (skipBtn) {
-                try { skipBtn.click(); } catch(e) {}
-            }
-            if (window.jwplayer && typeof window.jwplayer === 'function') {
-                try {
-                    var jp = window.jwplayer();
-                    if (jp && typeof jp.skipAd === 'function') {
-                        jp.skipAd();
-                    }
-                } catch(e) {}
-            }
-            // G. Anti-adblock siteNotice & ad popups
-            var siteNotice = document.getElementById('siteNotice');
-            if (siteNotice) {
-                siteNotice.remove();
-                if (document.body && document.body.style.overflow === 'hidden') document.body.style.overflow = '';
-                if (document.documentElement && document.documentElement.style.overflow === 'hidden') document.documentElement.style.overflow = '';
-            }
-            var adPopup = document.getElementById('ad-popup');
-            if (adPopup) {
-                adPopup.remove();
-            }
-            // H. Kill full-screen iframe overlays
-            var tIframes = document.querySelectorAll('html > iframe, body > iframe[style*="fixed"], iframe[style*="2147483647"], div[style*="2147483647"]');
-            for (var ti = 0; ti < tIframes.length; ti++) {
-                tIframes[ti].remove();
-            }
+            if (skipBtn) try { skipBtn.click(); } catch(e) {}
+            if (window.jwplayer && typeof window.jwplayer === 'function') try { var jp = window.jwplayer(); if (jp && typeof jp.skipAd === 'function') jp.skipAd(); } catch(e) {}
+
+            // G. Anti-adblock notices & full-screen iframe overlays
+            var sn = document.getElementById('siteNotice');
+            if (sn) { sn.remove(); if (document.body) document.body.style.overflow = ''; }
+            var ap = document.getElementById('ad-popup');
+            if (ap) ap.remove();
+            document.querySelectorAll('html > iframe, body > iframe[style*="fixed"], iframe[style*="2147483647"], div[style*="2147483647"]').forEach(function(ti) { ti.remove(); });
         } catch(e) {}
     }
 
@@ -426,34 +370,82 @@
     try {
         window.canRunAds = true; window.isAdBlockActive = false; window.adsBlocked = false;
         window.google_ad_status = 1; window.abp = false;
-        window.adsbygoogle = window.adsbygoogle || [];
-        window.adsbygoogle.loaded = true; window.adsbygoogle.push = function() {};
-        window.showAdblockMessage = function() {};
+        window.adsbygoogle = window.adsbygoogle || []; window.adsbygoogle.loaded = true; window.adsbygoogle.push = function() {};
+        window.showAdblockMessage = function() {}; window.openxtag = function() {}; window.ym = window.ym || function() {};
         window.aclib = window.aclib || { runPop: function() {}, runInPagePush: function() {}, runAutoTag: function() {}, runBanner: function() {} };
         try { Object.defineProperty(window, 'AcrpConfig', { get: function() { return undefined; }, set: function() {}, configurable: true }); } catch(e) {}
 
-        // Defeat getComputedStyle & offsetHeight inspection on bait elements
+        // Defuse Nuxt / Vuex anti-adblock state (FCTV, RBTV, MadPlay)
+        function sanitizePi(pi) {
+            if (!pi || typeof pi !== 'object') return;
+            try {
+                Object.defineProperties(pi, {
+                    fdom: { get: function() { return false; }, set: function() {}, configurable: true },
+                    fscript: { get: function() { return false; }, set: function() {}, configurable: true },
+                    fmmg: { get: function() { return false; }, set: function() {}, configurable: true }
+                });
+            } catch(e) {}
+        }
+        var _nState = window.__NUXT__;
+        if (_nState && _nState.state) sanitizePi(_nState.state.pi);
+        try {
+            Object.defineProperty(window, '__NUXT__', {
+                get: function() { return _nState; },
+                set: function(v) {
+                    _nState = v;
+                    if (v && v.state) {
+                        var _p = v.state.pi || {};
+                        sanitizePi(_p);
+                        try {
+                            Object.defineProperty(v.state, 'pi', {
+                                get: function() { return _p; },
+                                set: function(np) { sanitizePi(np); _p = np; },
+                                configurable: true
+                            });
+                        } catch(e) {}
+                    }
+                },
+                configurable: true
+            });
+        } catch(e) {}
+        var _cNuxt = window.$nuxt;
+        try {
+            Object.defineProperty(window, '$nuxt', {
+                get: function() { return _cNuxt; },
+                set: function(v) {
+                    _cNuxt = v;
+                    try { if (v && v.$store && v.$store.state) sanitizePi(v.$store.state.pi); } catch(e) {}
+                },
+                configurable: true
+            });
+        } catch(e) {}
+
+        // Defeat getComputedStyle & offsetHeight inspection on bait & ad elements
         try {
             var origGetComputedStyle = window.getComputedStyle;
             window.getComputedStyle = function(el, pseudo) {
-                var style = origGetComputedStyle.apply(this, arguments);
-                if (el && el.className && typeof el.className === 'string' && (el.className.indexOf('adsbox') !== -1 || el.className.indexOf('pub_300x250') !== -1 || el.className.indexOf('ad-placement') !== -1 || el.className.indexOf('banner_ad') !== -1)) {
-                    return new Proxy(style, {
-                        get: function(target, prop) {
-                            if (prop === 'display') return 'block';
-                            if (prop === 'visibility') return 'visible';
-                            return typeof target[prop] === 'function' ? target[prop].bind(target) : target[prop];
+                var s = origGetComputedStyle.apply(this, arguments);
+                var cn = el && el.className && typeof el.className === 'string' ? el.className : '';
+                if (cn && (cn.indexOf('adsbox') !== -1 || cn.indexOf('pub_300x250') !== -1 || cn.indexOf('ad-placement') !== -1 || cn.indexOf('banner_ad') !== -1 || cn.indexOf('czlll-') !== -1 || cn.indexOf('da-tep') !== -1)) {
+                    return new Proxy(s, {
+                        get: function(t, p) {
+                            if (p === 'display') return 'block';
+                            if (p === 'visibility') return 'visible';
+                            if (p === 'width') return '300px';
+                            if (p === 'left') return '0px';
+                            return typeof t[p] === 'function' ? t[p].bind(t) : t[p];
                         }
                     });
                 }
-                return style;
+                return s;
             };
 
             var origOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
             if (origOffsetHeight && origOffsetHeight.get) {
                 Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
                     get: function() {
-                        if (this.className && typeof this.className === 'string' && (this.className.indexOf('adsbox') !== -1 || this.className.indexOf('pub_300x250') !== -1 || this.className.indexOf('banner_ad') !== -1)) {
+                        var cn = this.className && typeof this.className === 'string' ? this.className : '';
+                        if (cn && (cn.indexOf('adsbox') !== -1 || cn.indexOf('pub_300x250') !== -1 || cn.indexOf('banner_ad') !== -1 || cn.indexOf('czlll-') !== -1 || cn.indexOf('da-tep') !== -1)) {
                             return 250;
                         }
                         return origOffsetHeight.get.apply(this);
@@ -463,27 +455,18 @@
             }
         } catch(e) {}
 
-        // Anti-Adblock Bait Unhide (defeat geometry detection on #banner_ad, .pub_300x250, etc.)
+        // Anti-Adblock Bait Unhide
         try {
             var baitStyle = document.createElement('style');
             baitStyle.textContent = '#banner_ad, div#banner_ad, .pub_300x250, .adsbox, .adunit, .ad-zone, .ad-space { display: block !important; visibility: visible !important; width: 300px !important; min-width: 300px !important; max-width: 300px !important; height: 250px !important; min-height: 250px !important; max-height: 250px !important; left: -9999px !important; position: absolute !important; }';
             (document.head || document.documentElement).appendChild(baitStyle);
         } catch(e) {}
 
-        if (!window.ga) {
-            window.ga = function() {};
-            window.ga.loaded = true;
-        }
-
+        if (!window.ga) { window.ga = function() {}; window.ga.loaded = true; }
         if (!window.googletag) {
             window.googletag = {
-                cmd: [],
-                display: function() {},
-                openConsole: function() {},
-                enableServices: function() {},
-                pubads: function() {
-                    return { addEventListener: function() {}, clear: function() {}, collapseEmptyDivs: function() {}, disableInitialLoad: function() {}, enableSingleRequest: function() {}, refresh: function() {} };
-                }
+                cmd: [], display: function() {}, openConsole: function() {}, enableServices: function() {},
+                pubads: function() { return { addEventListener: function() {}, clear: function() {}, collapseEmptyDivs: function() {}, disableInitialLoad: function() {}, enableSingleRequest: function() {}, refresh: function() {} }; }
             };
         }
     } catch(e) {}

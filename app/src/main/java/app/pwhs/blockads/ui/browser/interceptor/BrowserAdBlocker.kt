@@ -157,7 +157,9 @@ object BrowserAdBlocker {
             fullUrl.contains("adsbygoogle.js") -> {
                 getMockAdsByGoogleResponse()
             }
-            fullUrl.contains("/ads.js") || fullUrl.contains("/banner-ads.js") -> {
+            fullUrl.contains("/ads.js") || fullUrl.contains("/banner-ads.js") ||
+            fullUrl.contains("openxtag") || fullUrl.contains("sandburstf2b9n") ||
+            fullUrl.contains("mc.yandex.ru/metrika/tag") -> {
                 getMockEmptyJsResponse()
             }
             fullUrl.contains("google-analytics.com/collect") || fullUrl.contains("/collect?v=") -> {

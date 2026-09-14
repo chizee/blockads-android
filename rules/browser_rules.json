@@ -1,6 +1,6 @@
 {
-  "version": 14,
-  "updatedAt": 1726215000000,
+  "version": 15,
+  "updatedAt": 1726300000000,
   "adDomains": [
     "doubleclick.net",
     "googleadservices.com",
@@ -235,7 +235,17 @@
     "becorsolaom.com",
     "fantastindents.com",
     "apps2app.com",
-    "offerflowtogo.com"
+    "offerflowtogo.com",
+    "mc.yandex.ru",
+    "sandburstf2b9n.buzz",
+    "roastoup.com",
+    "masuksini.monster",
+    "playstake.casino",
+    "akseslink.win",
+    "bumibola.xyz",
+    "tinig22.com",
+    "dwagg.me",
+    "clever-core.com"
   ],
   "gamblingKeywords": [
     "lu88",
@@ -265,7 +275,9 @@
     "78win",
     "gem88",
     "win79",
-    "bc.game"
+    "bc.game",
+    "tokyo77",
+    "tokyo88"
   ],
   "adPathPatterns": [
     "/pagead",
@@ -302,7 +314,9 @@
     "/on.js",
     "/apitiny",
     "ezoic",
-    "AdsScript"
+    "AdsScript",
+    "/jquery.openxtag.js",
+    "/metrika/tag"
   ],
   "cosmeticCss": "https://raw.githubusercontent.com/pass-with-high-score/blockads-android/main/app/src/main/assets/browser/adblock_cosmetic.css",
   "scriptletsJs": "https://raw.githubusercontent.com/pass-with-high-score/blockads-android/main/app/src/main/assets/browser/adguard_scriptlets.js"
