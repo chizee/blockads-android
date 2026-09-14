@@ -14,6 +14,8 @@ jobs:
   build:
     name: Build & Lint
     runs-on: ubuntu-latest
+    env:
+      GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m"
 
     steps:
       - name: Checkout
@@ -61,7 +63,9 @@ jobs:
         run: ./gradlew lint
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug
+        run: |
+          ./gradlew --stop
+          ./gradlew assembleDebug
 
       - name: Upload arm64-v8a APK
         uses: actions/upload-artifact@v4
