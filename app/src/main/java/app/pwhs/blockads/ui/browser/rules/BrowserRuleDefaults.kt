@@ -6,7 +6,7 @@ package app.pwhs.blockads.ui.browser.rules
  */
 object BrowserRuleDefaults {
 
-    const val INITIAL_VERSION = 15L
+    const val INITIAL_VERSION = 16L
 
     val AD_HOST_SUFFIXES = listOf(
         "doubleclick.net",
@@ -257,7 +257,17 @@ object BrowserRuleDefaults {
         "bumibola.xyz",
         "tinig22.com",
         "dwagg.me",
-        "clever-core.com"
+        "clever-core.com",
+        "rancemalars.com",
+        "dwinnow.com",
+        "daleelerah.info",
+        "outsayremixed.shop",
+        "pinusrimbase.cfd",
+        "aratireposed.qpon",
+        "geodistpterian.shop",
+        "ukankingwithea.com",
+        "enaightdecipie.com",
+        "unlockr.app"
     )
 
     val GAMBLING_POPUNDER_KEYWORDS = listOf(

@@ -102,7 +102,8 @@
         'campfirecroutondecorator', 'beholdjarhypnotize', 'gigglegrowlworrisome', 'portalfluently',
         'thedirecthor', 'vivodemisrentas', 'bionomysolera', 'bundlemoviepumice', 'fagoklaer', 'gahakoleir',
         'cleverwebserver', 'adsboosters', '92mim', 'tzegilo', 'vr-gc', 'dd133', 'becorsolaom', 'apps2app', 'vignette',
-        'roastoup', 'sandburstf2b9n', 'tokyo77', 'tokyo88', 'masuksini', 'playstake', 'akseslink', 'bumibola', 'tinig22', 'dwagg'
+        'roastoup', 'sandburstf2b9n', 'tokyo77', 'tokyo88', 'masuksini', 'playstake', 'akseslink', 'bumibola', 'tinig22', 'dwagg',
+        'rancemalars', 'dwinnow', 'daleelerah', 'pinusrimbase', 'outsayremixed', 'aratireposed', 'geodistpterian', 'ukankingwithea', 'enaightdecipie', 'unlockr', 'mcw88vi'
     ];
 
     function isAdOrMaliciousUrl(url) {
