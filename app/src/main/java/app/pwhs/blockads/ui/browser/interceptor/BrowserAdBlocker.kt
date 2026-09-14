@@ -159,6 +159,8 @@ object BrowserAdBlocker {
             }
             fullUrl.contains("/ads.js") || fullUrl.contains("/banner-ads.js") ||
             fullUrl.contains("openxtag") || fullUrl.contains("sandburstf2b9n") ||
+            fullUrl.contains("/tag.min.js") || fullUrl.contains("jnbhi.com") ||
+            fullUrl.contains("highperformanceformat.com") ||
             fullUrl.contains("mc.yandex.ru/metrika/tag") -> {
                 getMockEmptyJsResponse()
             }

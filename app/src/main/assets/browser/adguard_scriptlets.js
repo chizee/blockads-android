@@ -104,7 +104,7 @@
         'cleverwebserver', 'adsboosters', '92mim', 'tzegilo', 'vr-gc', 'dd133', 'becorsolaom', 'apps2app', 'vignette',
         'roastoup', 'sandburstf2b9n', 'tokyo77', 'tokyo88', 'masuksini', 'playstake', 'akseslink', 'bumibola', 'tinig22', 'dwagg',
         'rancemalars', 'dwinnow', 'daleelerah', 'pinusrimbase', 'outsayremixed', 'aratireposed', 'geodistpterian', 'ukankingwithea', 'enaightdecipie', 'unlockr', 'mcw88vi',
-        '484r.com', 'llvpn.com', 'aichouphaugn'
+        '484r.com', 'llvpn.com', 'aichouphaugn', 'jnbhi', 'ay267', 'jomtingi', 'orbitsummit', 'highperformanceformat'
     ];
 
     function isAdOrMaliciousUrl(url) {
@@ -263,12 +263,18 @@
                 '#acrp-sticky-wrap, #acrp-sticky-inner, .acrp-sticky-close, .acrp-ad-box-1, [class*="acrp-ad"]',
                 '#random-ad, [id*="random-ad"], iframe[src*="a-ads.com"], [id^="__clb-spot"], .banners-all, .my_banner',
                 'aside.ezoic-ad-slot, section[aria-label="Sponsored offers"], div[role="dialog"][aria-label="Sponsored offers"]',
-                '.clever-core-ads, .czlll-rlselse, .czlll-rlselse1, [class*="czlll-"], [class*="da-tep"], .play-site-pop, .bt-pop-wrap, van-action-sheet.pop-2, div.van-popup.pop-2'
+                '.clever-core-ads, .czlll-rlselse, .czlll-rlselse1, [class*="czlll-"], [class*="da-tep"], .play-site-pop, .bt-pop-wrap, van-action-sheet.pop-2, div.van-popup.pop-2',
+                '.cky-consent-container, .cky-btn-revisit-wrapper, .idm-banner, a[href*="orbitsummit.info"]'
             ];
             var adEls = document.querySelectorAll(adSelectors.join(','));
             for (var i = 0; i < adEls.length; i++) {
                 adEls[i].style.cssText += ';display:none!important;pointer-events:none!important;height:0!important;min-height:0!important;';
             }
+            var sW = document.getElementById('lite-single-sora-wait'); if (sW) sW.style.display = 'none';
+            var sB = document.getElementById('lite-single-sora-button'); if (sB && sB.style.display === 'none') sB.style.display = 'inline-block';
+            var sT = document.getElementById('_0x713f2c5a1e'); if (sT) sT.style.display = 'none';
+            var dB = document.querySelectorAll('.downloadbtn[disabled], #downloadbtn[disabled]');
+            for (var db = 0; db < dB.length; db++) dB[db].removeAttribute('disabled');
 
             // B. Hide any anchors pointing to gambling or ad networks (preserve download links)
             var links = document.querySelectorAll('a[href]');
@@ -375,6 +381,7 @@
         window.adsbygoogle = window.adsbygoogle || []; window.adsbygoogle.loaded = true; window.adsbygoogle.push = function() {};
         window.showAdblockMessage = function() {}; window.openxtag = function() {}; window.ym = window.ym || function() {};
         window.aclib = window.aclib || { runPop: function() {}, runInPagePush: function() {}, runAutoTag: function() {}, runBanner: function() {} };
+        window._hemhc = function() {}; window._jbwvpyj = function() {};
         try { Object.defineProperty(window, 'AcrpConfig', { get: function() { return undefined; }, set: function() {}, configurable: true }); } catch(e) {}
 
         // Defuse Nuxt / Vuex anti-adblock state (FCTV, RBTV, MadPlay)
@@ -466,10 +473,7 @@
 
         if (!window.ga) { window.ga = function() {}; window.ga.loaded = true; }
         if (!window.googletag) {
-            window.googletag = {
-                cmd: [], display: function() {}, openConsole: function() {}, enableServices: function() {},
-                pubads: function() { return { addEventListener: function() {}, clear: function() {}, collapseEmptyDivs: function() {}, disableInitialLoad: function() {}, enableSingleRequest: function() {}, refresh: function() {} }; }
-            };
+            window.googletag = { cmd: [], display: function() {}, openConsole: function() {}, enableServices: function() {}, pubads: function() { return { addEventListener: function() {}, clear: function() {}, collapseEmptyDivs: function() {}, disableInitialLoad: function() {}, enableSingleRequest: function() {}, refresh: function() {} }; } };
         }
     } catch(e) {}
 

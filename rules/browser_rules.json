@@ -1,5 +1,5 @@
 {
-  "version": 15,
+  "version": 17,
   "updatedAt": 1726300000000,
   "adDomains": [
     "doubleclick.net",
@@ -245,7 +245,25 @@
     "bumibola.xyz",
     "tinig22.com",
     "dwagg.me",
-    "clever-core.com"
+    "clever-core.com",
+    "rancemalars.com",
+    "dwinnow.com",
+    "daleelerah.info",
+    "pinusrimbase.cfd",
+    "outsayremixed.shop",
+    "aratireposed.qpon",
+    "geodistpterian.shop",
+    "ukankingwithea.com",
+    "enaightdecipie.com",
+    "unlockr.app",
+    "484r.com",
+    "llvpn.com",
+    "aichouphaugn.com",
+    "jnbhi.com",
+    "ay267.com",
+    "jomtingi.net",
+    "orbitsummit.info",
+    "highperformanceformat.com"
   ],
   "gamblingKeywords": [
     "lu88",
@@ -316,7 +334,8 @@
     "ezoic",
     "AdsScript",
     "/jquery.openxtag.js",
-    "/metrika/tag"
+    "/metrika/tag",
+    "/tag.min.js"
   ],
   "cosmeticCss": "https://raw.githubusercontent.com/pass-with-high-score/blockads-android/main/app/src/main/assets/browser/adblock_cosmetic.css",
   "scriptletsJs": "https://raw.githubusercontent.com/pass-with-high-score/blockads-android/main/app/src/main/assets/browser/adguard_scriptlets.js"

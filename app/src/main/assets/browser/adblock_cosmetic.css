@@ -465,3 +465,22 @@ div:has(> iframe[style*="2147463647"]) {
     visibility: hidden !important;
     pointer-events: none !important;
 }
+
+/* Newsanimes / Soralink & Filespayouts */
+#lite-single-sora-wait,
+#_0x713f2c5a1e,
+.cky-consent-container,
+.cky-btn-revisit-wrapper,
+.idm-banner,
+a[href*="orbitsummit.info"],
+#countdown[data-status="disabled"] {
+    display: none !important;
+}
+#lite-single-sora-button {
+    display: inline-block !important;
+    cursor: pointer !important;
+}
+.downloadbtn, #downloadbtn {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+}

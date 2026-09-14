@@ -6,7 +6,7 @@ package app.pwhs.blockads.ui.browser.rules
  */
 object BrowserRuleDefaults {
 
-    const val INITIAL_VERSION = 16L
+    const val INITIAL_VERSION = 17L
 
     val AD_HOST_SUFFIXES = listOf(
         "doubleclick.net",
@@ -270,7 +270,12 @@ object BrowserRuleDefaults {
         "unlockr.app",
         "484r.com",
         "llvpn.com",
-        "aichouphaugn.com"
+        "aichouphaugn.com",
+        "jnbhi.com",
+        "ay267.com",
+        "jomtingi.net",
+        "orbitsummit.info",
+        "highperformanceformat.com"
     )
 
     val GAMBLING_POPUNDER_KEYWORDS = listOf(
@@ -318,6 +323,7 @@ object BrowserRuleDefaults {
         "ezoic",
         "AdsScript",
         "/jquery.openxtag.js",
-        "/metrika/tag"
+        "/metrika/tag",
+        "/tag.min.js"
     )
 }
