@@ -279,21 +279,16 @@ class GoTunnelAdapter(
         if (httpsFilteringEnabled && certDir.isNotEmpty()) {
             try {
                 val pm = context.packageManager
-                val uids = selectedBrowsers.mapNotNull { pkg ->
-                    try {
-                        pm.getPackageUid(pkg, 0)
-                    } catch (e: Exception) {
-                        null
-                    }
+                val browsers = selectedBrowsers.ifEmpty { loadPresetBrowsers() }
+                val uids = browsers.mapNotNull { pkg ->
+                    runCatching { pm.getPackageUid(pkg, 0) }.getOrNull()
                 }.joinToString(",")
 
-                // Enable the stack, init CA + filter, register UIDs.
                 engine.setUseTcpStack(true)
                 engine.startStackMitm(certDir)
                 engine.setMitmAllowedUIDs(uids)
                 engine.setFilterHttp3(filterHttp3)
 
-                // Load curated passthrough domains via zero-copy mmap
                 try {
                     val loaded = BlocklistInfo.fromAsset(context, "https_passthrough.txt")?.use { info ->
                         engine.setExtraPassthroughSuffixesFromFd(info.fd, info.startOffset, info.length)
@@ -308,7 +303,7 @@ class GoTunnelAdapter(
                     Timber.w(e, "Failed to load https_passthrough.txt asset")
                 }
 
-                Timber.d("HTTPS filtering via userspace TCP/IP stack (browsers=${selectedBrowsers.size})")
+                Timber.d("HTTPS filtering via userspace TCP/IP stack (browsers=${browsers.size}, uids=$uids)")
             } catch (e: Exception) {
                 Timber.e(e, "Failed to init stack MITM on VPN boot")
             }
@@ -481,6 +476,12 @@ class GoTunnelAdapter(
     fun getStats(): String {
         return engine.stats
     }
+
+    private fun loadPresetBrowsers(): Set<String> = runCatching {
+        context.assets.open("preset/browsers.txt").bufferedReader().useLines { lines ->
+            lines.map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }.toSet()
+        }
+    }.getOrDefault(setOf("com.android.chrome", "org.mozilla.firefox", "com.brave.browser"))
 
     companion object {
         private fun dnsQueryTypeToString(type: Int): String = when (type) {

@@ -454,3 +454,14 @@ a[href*="apps2app.com"] {
     padding: 0 !important;
     overflow: hidden !important;
 }
+
+/* Vignette ad popups & shufflebox floating ads */
+iframe[style*="z-index: 2147463647"],
+iframe[style*="2147463647"],
+div[data-shb],
+[data-shb="1"],
+div:has(> iframe[style*="2147463647"]) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}

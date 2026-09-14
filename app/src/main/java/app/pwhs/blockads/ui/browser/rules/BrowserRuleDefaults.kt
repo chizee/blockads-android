@@ -267,7 +267,10 @@ object BrowserRuleDefaults {
         "geodistpterian.shop",
         "ukankingwithea.com",
         "enaightdecipie.com",
-        "unlockr.app"
+        "unlockr.app",
+        "484r.com",
+        "llvpn.com",
+        "aichouphaugn.com"
     )
 
     val GAMBLING_POPUNDER_KEYWORDS = listOf(
