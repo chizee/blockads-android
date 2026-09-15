@@ -39,3 +39,4 @@ sentry.properties
 adguard.apk
 adguard
 .claude/
+.playwright-mcp/
